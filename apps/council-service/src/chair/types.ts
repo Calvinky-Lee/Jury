@@ -52,3 +52,15 @@ export interface MemberTranscript {
 export const PHASES = ['intake', 'casting', 'statements', 'rebuttal', 'closing', 'verdict'] as const;
 export type Phase = (typeof PHASES)[number];
 export type SessionStatus = 'created' | Phase | 'done' | 'failed';
+
+// Intake output (spec 04 §intake.ts). Note: the contract's `dilemma_parsed` SSE
+// payload (spec 02) only carries `summary`/`axesOfTension`/`councilSize` —
+// `decisionType` is used internally (eval-set categorization) and isn't emitted.
+// Flag for hour-0 reconciliation if that changes.
+export const IntakeResultSchema = z.object({
+  summary: z.string().min(1),
+  axesOfTension: z.array(z.string().min(1)).min(2).max(6),
+  decisionType: z.string().min(1),
+  councilSize: z.number().int().min(3).max(6),
+});
+export type IntakeResult = z.infer<typeof IntakeResultSchema>;
