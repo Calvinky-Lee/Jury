@@ -20,12 +20,19 @@ export interface ModelClient {
  */
 export class FakeModelClient implements ModelClient {
   constructor(
-    private readonly respond: (input: { system: string; user: string }) => unknown,
+    // Receives the full options (including `schema`) so tests exercising
+    // multiple prompt shapes through one fake client can route by schema
+    // identity (schemas are module-level singletons, so `===` works) or by
+    // inspecting the prompt text. May return a Promise — tests use this to
+    // simulate a slow member for orchestrator timeout/recusal scenarios.
+    private readonly respond: (
+      input: GenerateStructuredOptions<unknown>,
+    ) => unknown | Promise<unknown>,
   ) {}
 
-  async generateStructured<T>({ system, user, schema }: GenerateStructuredOptions<T>): Promise<T> {
-    const raw = this.respond({ system, user });
-    return schema.parse(raw);
+  async generateStructured<T>(opts: GenerateStructuredOptions<T>): Promise<T> {
+    const raw = await this.respond(opts as GenerateStructuredOptions<unknown>);
+    return opts.schema.parse(raw);
   }
 }
 
