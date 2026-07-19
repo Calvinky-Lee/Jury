@@ -11,21 +11,54 @@ created → intake → casting → statements → rebuttal → closing → verdi
 - **Non-fatal degradation:** a member timeout/error in `statements` or `rebuttal` emits `agent_recused` and continues with the remaining members (minimum 2; below that ⇒ fatal `error`).
 - The state machine is a plain data-first TS module in `chair/state-machine.ts` — no framework.
 
-## Model tiers (Gemini — `@google/genai` SDK)
+## Models — multi-model council with capability routing
+
+**Thesis upgrade: member diversity comes from personas AND models.** Different LLMs argue differently — putting council members on different models adds behavioral diversity a persona prompt can't fake, and each seat gets the model *measured* best for what that seat needs.
+
+### Model registry (`chair/models.ts`)
+
+One config file listing every usable model behind a common adapter interface (adapters are P4's, spec 01):
+
+```ts
+ModelEntry {
+  id: string                  // e.g. 'gemini-3-flash', 'claude-sonnet-5', 'gpt-5-mini' — pinned at hour 0
+  provider: 'google' | 'anthropic' | 'openai'
+  capabilities: {             // 1–5 scores, produced by the capability benchmark (spec 08) — never hand-typed
+    empathy: number           // emotional intelligence: reading stakes, feelings, human context
+    rigor: number             // analytical/quantitative reasoning
+    creativity: number        // novel options, reframing
+    groundedness: number      // uses/cites real facts well
+    voiceFidelity: number     // stays in persona without breaking character
+  }
+  supportsNativeSearch: boolean   // Gemini grounding; others search via Tavily (spec 06)
+  costTier: 'free' | 'cheap' | 'premium'
+}
+```
+
+Only models whose API key is present in the env are enabled (spec 09). Minimum viable set: two Gemini tiers + one non-Google model — the multi-model claim requires ≥2 providers.
+
+### Assignment (Chair-side, at casting)
+
+1. Intake additionally outputs `capabilityWeights` — how much this dilemma demands each capability (an emotionally charged dilemma weights `empathy` up; a pricing decision weights `rigor`).
+2. For each cast persona, the Chair derives the seat's capability emphasis from its archetype/decision style, blends it with the dilemma's weights, and picks the highest-scoring enabled model from the registry.
+3. **Provider-spread constraint:** when scores are within 0.3, prefer the assignment that keeps ≥2 providers on the council — model diversity is part of the product.
+4. The assignment is logged per seat (`castings.modelId`), emitted in `persona_cast` (`member.model`), and shown in the UI as a model chip — transparency is part of the demo.
+
+### Fixed roles
 
 | Role | Model | Rationale |
 |---|---|---|
-| Intake, situation briefs | Gemini Flash tier | structured extraction (`responseSchema` JSON mode), cheap/free |
-| Members (statements + rebuttals + closings) | Gemini Flash tier | N× parallel × 3 phases — speed dominates; closings are tiny; Google Search grounding available (spec 06) |
-| Verdict | Gemini Pro tier | the highest-skill prompt; one call per session justifies the tier |
+| Intake, situation briefs | cheapest fast tier (Gemini Flash class) | structured extraction, cheap/free |
+| Members | **routed per seat** (above) | the whole point |
+| Verdict + LLM judge | strongest reasoning model in the registry | highest-skill prompt; one call per session |
 
-Exact model IDs (`gemini-3-flash` / `gemini-3-pro`, falling back to `gemini-2.5-flash` / `gemini-2.5-pro` if 3.x isn't available on the team's AI Studio tier) are **verified at hour 0** and pinned as per-role constants in one config file. AI Studio free-tier rate limits (RPM/TPM) are the real constraint, not dollars — the orchestrator serializes phases if 429s appear. The $0.50/session cap (spec 09) stays as the kill-switch if a paid key is used.
+Exact model IDs verified at hour 0 and pinned in the registry. Free-tier rate limits (per provider) are the real constraint — the orchestrator serializes phases per provider on 429s. The $0.50/session cap (spec 09) stays as the kill-switch on paid keys.
 
 ## Prompts (all in `chair/prompts/`, each a typed function → messages array)
 
 ### 1. `intake.ts`
 - **Input:** raw dilemma + optional context.
-- **Output (structured):** `{ summary, axesOfTension: string[2-6], decisionType, councilSize }`. Council size = one member per axis of tension plus one generalist, clamped 3–6 (default 4) — the council is as big as the case demands, no bigger.
+- **Output (structured):** `{ summary, axesOfTension: string[2-6], decisionType, councilSize, capabilityWeights }`. Council size = one member per axis of tension plus one generalist, clamped 3–6 (default 4) — the council is as big as the case demands, no bigger. `capabilityWeights` = the dilemma's demand for each capability dimension (drives model routing, §Models).
 - Axes must be *tensions* ("job security vs. growth ceiling"), never generic ("pros vs cons"). Acceptance: ≥18/20 benchmark dilemmas produce non-trivial axes.
 
 ### 2. `brief.ts` — situation brief

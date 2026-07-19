@@ -34,6 +34,15 @@ Judge rules: sees full transcript + verdict, never the KPI targets; one score + 
 | Completion rate (no recusals) | ≥ 95% |
 | Cost per session | < $0.50 hard cap |
 
+## Model capability benchmark (`eval/model-bench.ts`) — feeds the registry (spec 04)
+
+Scores every enabled model on the five capability dimensions; the output matrix is what the Chair routes on. **Profiles are measured, never hand-typed.**
+
+- **Probe set (`eval/capability-probes.json`):** ~10 probes per dimension, fixed once written. Examples — *empathy:* respond as an advisor to an emotionally loaded dilemma (layoff, breakup, family conflict); *rigor:* a quantitative trade-off with a checkable direction; *creativity:* generate a third option beyond the stated two; *groundedness:* answer requiring a sourced fact (search allowed); *voiceFidelity:* argue in an assigned persona voice for 150 words without breaking character.
+- **Scoring:** LLM judge (the registry's strongest reasoning model, temperature 0) scores each response 1–5 against a per-dimension rubric with anchored examples. **Judge-bias caveat, documented:** the judge model is also a contestant; mitigate by rubric anchoring and by having the judge score blind (responses labeled A/B/C, provider stripped). Accepted as a hackathon-grade compromise.
+- **Output:** `eval/runs/model-matrix-<timestamp>.json` → the blessed copy checked in as `chair/model-matrix.json`, loaded by the registry. Rerun whenever a model is added or swapped; the matrix records probe-set hash + judge model.
+- **Council-level A/B (the headline claim):** run the 20-dilemma benchmark twice — single-model council vs. capability-routed multi-model council — and compare the spec-08 KPIs (genuine-dissent rate, verdict fidelity, actionability). If routing wins, that's the number for the pitch; if it doesn't, we learn it before judges ask.
+
 ## Harness (`eval/run-eval.ts`)
 
 1. Run all 20 benchmark dilemmas through the real pipeline (serially or 2-wide — respect rate limits).

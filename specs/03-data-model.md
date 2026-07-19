@@ -28,7 +28,7 @@ MongoDB Atlas (free M0 tier) with **Atlas Vector Search** for the persona librar
 
 // castings — one doc per seat
 { sessionId: uuid, personaId: ObjectId, seat: int,   // 0..councilSize-1
-  situationBrief: string, mmrScore: number,
+  situationBrief: string, mmrScore: number, modelId: string,   // capability routing (spec 04)
   diversityScore?: number, vectorPoint?: { x: number, y: number } }
 
 // statements

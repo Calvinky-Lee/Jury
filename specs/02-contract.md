@@ -29,6 +29,11 @@ Persona = PersonaIdentity & { stanceProfile: StanceProfile }
 CastMember = Persona & {
   situationBrief: string   // Chair-written specialization for this dilemma
   mmrScore: number
+  model: {                 // which LLM powers this seat (capability routing, spec 04)
+    id: string             //   e.g. 'gemini-3-flash', 'claude-sonnet-5'
+    provider: string
+    reason: string         //   ≤80 chars: why this model for this seat ("highest empathy for the emotional axis")
+  }
 }
 ```
 
@@ -78,7 +83,7 @@ Event<T> { seq: number, sessionId: string, ts: string, type: string, payload: T 
 | type | payload | notes |
 |---|---|---|
 | `session_started` | `{ dilemma, context? }` | |
-| `dilemma_parsed` | `{ summary, axesOfTension: string[], councilSize: number }` | from intake; N clamped 3–6, default 4 |
+| `dilemma_parsed` | `{ summary, axesOfTension: string[], councilSize: number, capabilityWeights }` | from intake; N clamped 3–6, default 4; weights drive model routing |
 | `casting_started` | `{ poolSize, councilSize }` | |
 | `persona_cast` | `{ member: CastMember, seat: number, runningDiversityScore, initialRead: string }` | ×N (councilSize), seat 0..N-1; `initialRead` = ≤140-char first take on the problem (distilled from the situation brief) → the member's first thinking bubble |
 | `casting_done` | `{ diversityScore, baselineRatio, vectorMap: VectorPoint[] }` | ratio is the ≥1.3× KPI number; vectorMap feeds the sidebar graph |

@@ -6,7 +6,8 @@
 
 | Account | For | Free tier OK? |
 |---|---|---|
-| Google AI Studio | Gemini API — Chair, members, LLM judge, Google Search grounding | yes — generous free tier; rate limits (RPM/TPM) are the real constraint, verify at hour 0 |
+| Google AI Studio | Gemini API — intake, members, Google Search grounding | yes — generous free tier; rate limits (RPM/TPM) are the real constraint, verify at hour 0 |
+| Anthropic / OpenAI *(≥1 recommended)* | non-Google council members — the multi-model claim needs ≥2 providers (spec 04) | needs a few dollars of credits; the registry auto-disables models with no key |
 | Voyage AI | `voyage-3` embeddings (MongoDB-owned — natural pairing with Atlas) | yes — seed is one batch; queries are tiny |
 | MongoDB Atlas | documents + Atlas Vector Search | yes — M0 free tier supports vector search |
 | Tavily *(only if grounding fallback triggers, spec 06)* | web search fallback | yes |
@@ -17,7 +18,9 @@ One local `.env` at the repo root, loaded by both apps. Gitignored from commit 1
 
 | Var | Used by | What |
 |---|---|---|
-| `GEMINI_API_KEY` | council-service, seed, eval | all model calls + Google Search grounding (AI Studio) |
+| `GEMINI_API_KEY` | council-service, seed, eval | Gemini models + Google Search grounding (AI Studio) — **required** |
+| `ANTHROPIC_API_KEY` | council-service, eval | *optional* — enables Claude models in the multi-model registry (spec 04) |
+| `OPENAI_API_KEY` | council-service, eval | *optional* — enables GPT models in the registry |
 | `VOYAGE_API_KEY` | council-service, seed | voyage-3 embeddings (seed batch + per-session dilemma query) |
 | `MONGODB_URI` | council-service, seed | Atlas SRV connection string — never imported by `apps/web` |
 | `COUNCIL_SERVICE_URL` | web | proxy route target, `http://localhost:8787` |

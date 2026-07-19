@@ -1,0 +1,27 @@
+{
+  "name": "council",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "seed:generate": "tsx seed/generate-personas.ts",
+    "seed:embed": "tsx seed/embed-personas.ts",
+    "seed:load": "tsx seed/load-mongo.ts",
+    "seed:indexes": "tsx seed/setup-indexes.ts",
+    "seed:baselines": "tsx seed/compute-baselines.ts",
+    "seed": "pnpm seed:generate && pnpm seed:embed && pnpm seed:load && pnpm seed:indexes && pnpm seed:baselines"
+  },
+  "devDependencies": {
+    "@types/node": "^26.1.1",
+    "tsx": "^4.19.0",
+    "typescript": "^5.6.0",
+    "vitest": "^3.0.0"
+  },
+  "dependencies": {
+    "@google/genai": "^1.0.0",
+    "dotenv": "^16.4.0",
+    "mongodb": "^6.10.0",
+    "zod": "^3.23.0"
+  }
+}

@@ -7,7 +7,7 @@ Two tools, available to council members only during **opening statements** (max 
 - Built into the Gemini API: pass the `google_search` tool in the member call's config; Google executes the search server-side and the response comes back grounded with `groundingMetadata` (queries used + source URIs). Zero extra API key, zero scraping code.
 - **Event mapping:** the member-runner translates `groundingMetadata` into contract events — `tool_call` (`input`: the search queries Gemini issued) and `tool_result` (`summary`: top source titles, ≤140 chars) — keyed by `callId`. Emitted when the grounded response lands (grounding is not step-streamed; acceptable — the chip appears with the statement).
 - Note: grounding + `responseSchema` cannot always be combined in one call — the member runner does the grounded prose call first, then a tiny schema-forced call to extract the `Stance`. Verify the interaction at hour 0 and record the outcome here.
-- Fallback (if grounding is unavailable on the team's tier): Tavily (`TAVILY_API_KEY`) as a declared function tool.
+- **Non-Gemini members (multi-model routing, spec 04) always search via Tavily** (`TAVILY_API_KEY`), declared as a function tool — the search *tool layer* is provider-agnostic even though the mechanism differs; both paths emit identical `tool_call`/`tool_result` events. Tavily is also the fallback if grounding is unavailable on the team's tier — verify at hour 0, record the outcome here.
 
 ## 2. Calculator — Gemini function calling
 

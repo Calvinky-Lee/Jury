@@ -1,0 +1,11 @@
+{
+  "name": "@council/service",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@council/contract": "workspace:*",
+    "mongodb": "^6.10.0",
+    "zod": "^3.23.0"
+  }
+}

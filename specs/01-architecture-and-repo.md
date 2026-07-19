@@ -51,7 +51,10 @@ jury/
 │       │   ├── chair/            # P1
 │       │   │   ├── state-machine.ts
 │       │   │   ├── orchestrator.ts
-│       │   │   └── prompts/      # intake.ts, brief.ts, statement.ts, rebuttal.ts, verdict.ts
+│       │   │   ├── models.ts     # model registry + capability routing (spec 04); model-matrix.json
+│       │   │   └── prompts/      # intake.ts, brief.ts, statement.ts, rebuttal.ts, closing.ts, verdict.ts
+│       │   ├── models/           # P4 — provider adapters behind one interface (spec 04):
+│       │   │                     #   gemini.ts, anthropic.ts, openai.ts
 │       │   ├── casting/          # P2
 │       │   │   ├── retrieve.ts   # Atlas $vectorSearch top-K
 │       │   │   ├── mmr.ts        # pure function, unit-tested

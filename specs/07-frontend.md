@@ -68,7 +68,7 @@ One per member, always in the same position, **fixed dimensions** (~30ch × 4 li
 Always-visible six-step stepper driven by the reducer's `phase`: **understanding the case → convening the council → forming opinions → deliberating (reading each other) → pitches to the Chair → decision**. Current phase pulses; completed phases get a check. This makes the *thinking process* legible — each stage of how the answer was reached is a named, visible step, not a spinner.
 
 ### PersonaCard (hover/click)
-Any member blob or nameplate: **hover** opens a compact popover (archetype, one-line decision style, top values); **click** pins the full card (adds biases, voice, domains, and the Chair's situation brief for *this* case). Data rides in `persona_cast` — no fetch. Also the hover tooltip body in the vector sidebar. Keyboard/touch: click-only fallback.
+Any member blob or nameplate: **hover** opens a compact popover (archetype, one-line decision style, top values); **click** pins the full card (adds biases, voice, domains, the model chip with routing reason, and the Chair's situation brief for *this* case). Data rides in `persona_cast` — no fetch. Also the hover tooltip body in the vector sidebar. Keyboard/touch: click-only fallback.
 
 ### Vector sidebar (`components/sidebar/VectorGraph`)
 Toggled by the ⿻ button; slides in without disturbing the scene. Renders `casting_done.vectorMap`:

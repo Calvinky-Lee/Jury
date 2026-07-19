@@ -19,7 +19,7 @@ Every consequential decision means chasing multiple people's opinions, doing bac
 
 **Phoebe framing:** The Council is an AI *teammate panel* you convene on demand. It automates the repetitive work of decision-making (perspective-gathering, research, synthesis) and turns a week of Slack threads into a structured decision memo in ~90 seconds.
 
-**Novelty claim (say this explicitly in the pitch):** multi-persona LLM deliberation is a known pattern. Our differentiation is (1) situation-tailored persona *casting* instead of hardcoded characters, (2) *measured* diversity enforcement — a number on screen, not vibes, and (3) *preserved disagreement* — the verdict celebrates the dissent instead of averaging it away.
+**Novelty claim (say this explicitly in the pitch):** multi-persona LLM deliberation is a known pattern. Our differentiation is (1) situation-tailored persona *casting* instead of hardcoded characters, (2) *measured* diversity enforcement — a number on screen, not vibes, (3) *preserved disagreement* — the verdict celebrates the dissent instead of averaging it away, and (4) **multi-model capability routing** — council seats run on *different LLMs*, each chosen from a benchmarked capability matrix (empathy, rigor, creativity, groundedness, voice fidelity) to fit what this dilemma demands (specs 04 + 08).
 
 ## 2. Product definition
 
