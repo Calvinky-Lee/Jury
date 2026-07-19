@@ -64,3 +64,24 @@ export const IntakeResultSchema = z.object({
   councilSize: z.number().int().min(3).max(6),
 });
 export type IntakeResult = z.infer<typeof IntakeResultSchema>;
+
+// Full-enough persona shape for the situation-brief prompt: identity fields
+// (CastMemberLite) plus the stance-profile fields spec 05 owns for real
+// (P2's persona/casting system). This is a local stand-in, same caveat as
+// CastMemberLite above.
+export interface PersonaForBrief extends CastMemberLite {
+  voice: string;
+  coreValues: string[];
+  biases: string[];
+  decisionStyle: string;
+}
+
+// Situation-brief output (spec 04 §brief.ts).
+export const SituationBriefSchema = z.object({
+  brief: z.string().min(1),
+  // "Bubble rule": every member phase's structured output includes a first-person,
+  // in-voice ≤140-char summary — for the brief, this becomes the member's very
+  // first thinking bubble (persona_cast.initialRead).
+  initialRead: z.string().min(1).max(140),
+});
+export type SituationBrief = z.infer<typeof SituationBriefSchema>;
