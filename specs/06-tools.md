@@ -1,6 +1,6 @@
 # 06 — Tools
 
-Two tools, available to council members only during **opening statements** (max 3 iterations; rebuttals and closings are tool-free per spec 04). Every use emits `tool_call` / `tool_result` events — tool use on screen is the "agents coordinate the real world" pitch moment, so results are never silent.
+Two tools, available to sidebar members only during **opening statements** (max 3 iterations; rebuttals and closings are tool-free per spec 04). Every use emits `tool_call` / `tool_result` events — tool use on screen is the "agents coordinate the real world" pitch moment, so results are never silent.
 
 ## 1. Web search — **Gemini Google Search grounding**
 

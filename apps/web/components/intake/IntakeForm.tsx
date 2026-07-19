@@ -135,7 +135,7 @@ export function IntakeForm() {
               type="button"
               onClick={handleSubmit}
               disabled={status === "submitting"}
-              aria-label="Convene the council"
+              aria-label="Convene the Sidebar"
               variants={arrowVariants}
               initial="collapsed"
               animate="expanded"
@@ -151,7 +151,7 @@ export function IntakeForm() {
 
       {status === "unreachable" && (
         <p className="text-center text-sm text-terracotta">
-          Council service isn&apos;t running yet — this is a stub route until the backend is wired up.
+          Sidebar service isn&apos;t running yet — this is a stub route until the backend is wired up.
         </p>
       )}
     </div>

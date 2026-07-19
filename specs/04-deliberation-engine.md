@@ -11,9 +11,9 @@ created → intake → casting → statements → rebuttal → closing → verdi
 - **Non-fatal degradation:** a member timeout/error in `statements` or `rebuttal` emits `agent_recused` and continues with the remaining members (minimum 2; below that ⇒ fatal `error`).
 - The state machine is a plain data-first TS module in `chair/state-machine.ts` — no framework.
 
-## Models — multi-model council with capability routing
+## Models — multi-model sidebar with capability routing
 
-**Thesis upgrade: member diversity comes from personas AND models.** Different LLMs argue differently — putting council members on different models adds behavioral diversity a persona prompt can't fake, and each seat gets the model *measured* best for what that seat needs.
+**Thesis upgrade: member diversity comes from personas AND models.** Different LLMs argue differently — putting sidebar members on different models adds behavioral diversity a persona prompt can't fake, and each seat gets the model *measured* best for what that seat needs.
 
 ### Model registry (`chair/models.ts`)
 
@@ -41,7 +41,7 @@ Only models whose API key is present in the env are enabled (spec 09). Minimum v
 
 1. Intake additionally outputs `capabilityWeights` — how much this dilemma demands each capability (an emotionally charged dilemma weights `empathy` up; a pricing decision weights `rigor`).
 2. For each cast persona, the Chair derives the seat's capability emphasis from its archetype/decision style, blends it with the dilemma's weights, and picks the highest-scoring enabled model from the registry.
-3. **Provider-spread constraint:** when scores are within 0.3, prefer the assignment that keeps ≥2 providers on the council — model diversity is part of the product.
+3. **Provider-spread constraint:** when scores are within 0.3, prefer the assignment that keeps ≥2 providers on the sidebar — model diversity is part of the product.
 4. The assignment is logged per seat (`castings.modelId`), emitted in `persona_cast` (`member.model`), and shown in the UI as a model chip — transparency is part of the demo.
 
 ### Fixed roles
@@ -58,7 +58,7 @@ Exact model IDs verified at hour 0 and pinned in the registry. Free-tier rate li
 
 ### 1. `intake.ts`
 - **Input:** raw dilemma + optional context.
-- **Output (structured):** `{ summary, axesOfTension: string[2-6], decisionType, councilSize, capabilityWeights }`. Council size = one member per axis of tension plus one generalist, clamped 3–6 (default 4) — the council is as big as the case demands, no bigger. `capabilityWeights` = the dilemma's demand for each capability dimension (drives model routing, §Models).
+- **Output (structured):** `{ summary, axesOfTension: string[2-6], decisionType, sidebarSize, capabilityWeights }`. Sidebar size = one member per axis of tension plus one generalist, clamped 3–6 (default 4) — the sidebar is as big as the case demands, no bigger. `capabilityWeights` = the dilemma's demand for each capability dimension (drives model routing, §Models).
 - Axes must be *tensions* ("job security vs. growth ceiling"), never generic ("pros vs cons"). Acceptance: ≥18/20 benchmark dilemmas produce non-trivial axes.
 
 ### 2. `brief.ts` — situation brief
@@ -85,7 +85,7 @@ Exact model IDs verified at hour 0 and pinned in the registry. Free-tier rate li
 
 ### 6. `verdict.ts` — **built first, against hand-authored fake stances**
 - **Input:** parsed dilemma + all locked final stances + statement/rebuttal/closing texts.
-- **Output:** `Verdict` (contract) + `briefMd` (the exportable decision brief: dilemma, council, vote, ruling, solution plan, dissent, conditions — ~1 page of Markdown).
+- **Output:** `Verdict` (contract) + `briefMd` (the exportable decision brief: dilemma, sidebar, vote, ruling, solution plan, dissent, conditions — ~1 page of Markdown).
 - **The verdict is two distinct products, and the prompt treats them separately:**
   1. `ruling` — the Chair's direct, personal answer to the user's question (1–3 sentences, no hedging).
   2. `solutionPlan` — 3–6 concrete steps: a *devised* optimal solution that mixes the strongest elements across members (e.g., the Gambler's move with the Actuary's safeguard attached) — synthesis, not side-picking.

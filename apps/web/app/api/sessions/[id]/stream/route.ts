@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-const COUNCIL_SERVICE_URL = process.env.COUNCIL_SERVICE_URL ?? "http://localhost:8787";
+const SIDEBAR_SERVICE_URL = process.env.SIDEBAR_SERVICE_URL ?? "http://localhost:8787";
 
 // Live SSE proxy — must stream the upstream body through untouched rather than
 // buffering it, and stay request-time (never cached/prerendered).
@@ -15,7 +15,7 @@ export async function GET(
   const lastEventId = req.headers.get("last-event-id");
 
   try {
-    const upstream = await fetch(`${COUNCIL_SERVICE_URL}/sessions/${id}/stream`, {
+    const upstream = await fetch(`${SIDEBAR_SERVICE_URL}/sessions/${id}/stream`, {
       headers: lastEventId ? { "last-event-id": lastEventId } : {},
       cache: "no-store",
       signal: req.signal,
@@ -31,6 +31,6 @@ export async function GET(
       },
     });
   } catch {
-    return NextResponse.json({ error: "council service unreachable" }, { status: 502 });
+    return NextResponse.json({ error: "sidebar service unreachable" }, { status: 502 });
   }
 }

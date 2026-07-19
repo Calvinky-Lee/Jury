@@ -3,9 +3,9 @@
  * persona embeddings plus the standard indexes. Run after seed:load.
  */
 import 'dotenv/config'
-import { closeDb, getDb } from '../apps/council-service/src/db/client'
-import { EMBEDDING_DIMS } from '../apps/council-service/src/casting/embed'
-import { VECTOR_INDEX } from '../apps/council-service/src/casting/retrieve'
+import { closeDb, getDb } from '../apps/sidebar-service/src/db/client'
+import { EMBEDDING_DIMS } from '../apps/sidebar-service/src/casting/embed'
+import { VECTOR_INDEX } from '../apps/sidebar-service/src/casting/retrieve'
 
 async function main() {
   const db = await getDb()

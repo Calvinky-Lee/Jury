@@ -7,16 +7,16 @@
 ```mermaid
 flowchart LR
     U[Browser] -->|localhost:3000| W[apps/web · Next.js · local]
-    W -->|proxy| CS[apps/council-service · Hono · localhost:8787]
+    W -->|proxy| CS[apps/sidebar-service · Hono · localhost:8787]
     CS -->|Gemini API| A[Gemini — Chair + N members + search grounding]
     CS -->|Voyage API| V[voyage-3 embeddings]
     CS -->|MONGODB_URI| M[(MongoDB Atlas + Vector Search)]
 ```
 
-- **`apps/web`** (local Next.js): intake, live courtroom, replay pages. ALL data (live SSE and finished-session reads) flows through Next.js route handler proxies to the council service — one code path, and the app is host-ready if it's ever deployed later.
-- **`apps/council-service`** (local Hono on :8787): runs deliberations, streams SSE, and serves the read endpoints for finished sessions (`GET /sessions/:id`, `GET /sessions/:id/events`). A separate process (not Next API routes) so a 60–90s streaming session never fights the web app, and the service is deployable unchanged later.
-- **MongoDB Atlas** (free M0, cloud): persona library (Atlas Vector Search), session persistence, event replay log. Only the council service holds `MONGODB_URI`; the frontend never reads the DB directly (spec 03 §Access policy). Offline fallback: Atlas CLI local deployment supports vector search on-laptop.
-- **Model calls**: Gemini (`@google/genai`) from the council service only. No model calls from the frontend.
+- **`apps/web`** (local Next.js): intake, live courtroom, replay pages. ALL data (live SSE and finished-session reads) flows through Next.js route handler proxies to the sidebar service — one code path, and the app is host-ready if it's ever deployed later.
+- **`apps/sidebar-service`** (local Hono on :8787): runs deliberations, streams SSE, and serves the read endpoints for finished sessions (`GET /sessions/:id`, `GET /sessions/:id/events`). A separate process (not Next API routes) so a 60–90s streaming session never fights the web app, and the service is deployable unchanged later.
+- **MongoDB Atlas** (free M0, cloud): persona library (Atlas Vector Search), session persistence, event replay log. Only the sidebar service holds `MONGODB_URI`; the frontend never reads the DB directly (spec 03 §Access policy). Offline fallback: Atlas CLI local deployment supports vector search on-laptop.
+- **Model calls**: Gemini (`@google/genai`) from the sidebar service only. No model calls from the frontend.
 
 ## Monorepo layout (pnpm workspace)
 
@@ -32,7 +32,7 @@ jury/
 │   │   │   ├── session/[id]/     # live HQ (SSE)
 │   │   │   ├── replay/[id]/      # finished-session replay (via read-endpoint proxy)
 │   │   │   ├── dev/replay/       # fixture replay harness (frontend task 3)
-│   │   │   └── api/sessions/     # proxy routes → council-service
+│   │   │   └── api/sessions/     # proxy routes → sidebar-service
 │   │   ├── components/
 │   │   │   ├── hq/               # Chair, ConsoleSeat, Blob (SVG character), SpeechBubble,
 │   │   │   │                     #   ToolChip, PhaseTracker, PersonaCard, OrbField, SearchBar
@@ -43,7 +43,7 @@ jury/
 │   │       ├── sse-client.ts     # reconnect + Last-Event-ID resume
 │   │       ├── session-store.ts  # single reducer: contract events → HQ state
 │   │       └── blobs.ts          # 12-hue palette + SVG form set (characters are code, not assets)
-│   └── council-service/          # P4 scaffold, P1 chair, P2 casting
+│   └── sidebar-service/          # P4 scaffold, P1 chair, P2 casting
 │       ├── src/
 │       │   ├── index.ts          # Hono app: POST /sessions, GET /sessions/:id/stream,
 │       │   │                     #   GET /sessions/:id, GET /sessions/:id/events (replay reads)

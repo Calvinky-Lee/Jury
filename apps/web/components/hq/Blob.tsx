@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import type { Avatar } from "@council/contract";
+import type { Avatar } from "@sidebar/contract";
 import { BLOB_BODY_PATH, HUES, type BlobState } from "@/lib/blobs";
 import { personaFace, type PersonaTraits } from "@/lib/persona-face";
 
@@ -116,7 +116,7 @@ export function Blob({ avatar, state = "idle", size = 72, className, index = 0, 
       height={size}
       className={className}
       role="img"
-      aria-label={`${avatar.hue} ${avatar.form} council member, ${state}`}
+      aria-label={`${avatar.hue} ${avatar.form} Sidebar member, ${state}`}
       style={{ transformOrigin: "50% 100%" }}
       animate={
         state === "idle"

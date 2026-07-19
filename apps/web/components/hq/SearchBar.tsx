@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import type { SessionSummary } from "@council/contract";
+import type { SessionSummary } from "@sidebar/contract";
 
 interface SearchBarProps {
   onResults: (sessions: SessionSummary[] | null) => void;
@@ -25,7 +25,7 @@ export function SearchBar({ onResults }: SearchBarProps) {
         const data = await res.json();
         onResults(data.sessions ?? []);
       } catch {
-        // council service unreachable — ignore, search is best-effort
+        // sidebar service unreachable — ignore, search is best-effort
       }
     }, 300);
     return () => {

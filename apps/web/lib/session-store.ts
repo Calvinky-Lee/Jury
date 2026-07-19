@@ -8,7 +8,7 @@ import type {
   Stance,
   VectorPoint,
   Verdict,
-} from "@council/contract";
+} from "@sidebar/contract";
 
 export type BlobState = "idle" | "talking" | "dissent";
 
@@ -52,7 +52,7 @@ export interface HqState {
   context?: string;
   summary?: string;
   axesOfTension?: string[];
-  councilSize?: number;
+  sidebarSize?: number;
   diversityScore?: number;
   baselineRatio?: number;
   members: Record<string, MemberView>;
@@ -112,11 +112,11 @@ function applyContractEvent(state: HqState, event: ContractEvent): HqState {
         status: "casting",
         summary: event.payload.summary,
         axesOfTension: event.payload.axesOfTension,
-        councilSize: event.payload.councilSize,
+        sidebarSize: event.payload.sidebarSize,
         seatOrder:
-          state.seatOrder.length === event.payload.councilSize
+          state.seatOrder.length === event.payload.sidebarSize
             ? state.seatOrder
-            : Array.from({ length: event.payload.councilSize }, () => null),
+            : Array.from({ length: event.payload.sidebarSize }, () => null),
       };
 
     case "casting_started":
@@ -124,11 +124,11 @@ function applyContractEvent(state: HqState, event: ContractEvent): HqState {
         ...state,
         phase: "casting",
         status: "casting",
-        councilSize: event.payload.councilSize,
+        sidebarSize: event.payload.sidebarSize,
         seatOrder:
-          state.seatOrder.length === event.payload.councilSize
+          state.seatOrder.length === event.payload.sidebarSize
             ? state.seatOrder
-            : Array.from({ length: event.payload.councilSize }, () => null),
+            : Array.from({ length: event.payload.sidebarSize }, () => null),
       };
 
     case "persona_cast": {

@@ -17,7 +17,43 @@ import { checkHueBalance, validatePersona } from './validate-persona'
 const OUT = join(dirname(fileURLToPath(import.meta.url)), 'personas.json')
 const TARGET = 200
 const BATCH = 10
-const MODEL = 'gemini-2.5-flash' // pinned at hour 0 per spec 04; upgrade to 3.x if the tier allows
+// gemini-2.5-flash now 404s for new API keys ("no longer available to new
+// users"); gemini-3-flash-preview verified working + reliable at JSON output on
+// 2026-07-19 (same tier constant the sidebar uses — see
+// apps/sidebar-service/src/chair/model-config.ts §MEMBER_MODEL).
+const MODEL = 'gemini-3-flash-preview'
+
+/**
+ * Robustly extracts the first balanced top-level JSON array from model output.
+ * `responseMimeType: 'application/json'` does NOT guarantee a clean bare array —
+ * observed live on gemini-3.x: a ```json fence, leaked reasoning text before/after
+ * the array, or trailing junk. Bracket-matching to the first balanced [...] (while
+ * skipping string contents) is far more robust than a naive JSON.parse of the
+ * whole response.
+ */
+function extractJsonArray(text: string): unknown[] {
+  const start = text.indexOf('[')
+  if (start === -1) throw new Error('no JSON array found in response')
+  let depth = 0
+  let inString = false
+  let escaped = false
+  for (let i = start; i < text.length; i++) {
+    const ch = text[i]
+    if (inString) {
+      if (escaped) escaped = false
+      else if (ch === '\\') escaped = true
+      else if (ch === '"') inString = false
+      continue
+    }
+    if (ch === '"') inString = true
+    else if (ch === '[') depth++
+    else if (ch === ']') {
+      depth--
+      if (depth === 0) return JSON.parse(text.slice(start, i + 1))
+    }
+  }
+  throw new Error('unterminated JSON array (likely truncated generation)')
+}
 
 const DOMAIN_BATCHES: { domain: string; share: number }[] = [
   { domain: 'business & startups', share: 0.2 },
@@ -90,7 +126,7 @@ async function main() {
       })
       let batch: unknown[]
       try {
-        batch = JSON.parse(res.text ?? '[]')
+        batch = extractJsonArray(res.text ?? '')
       } catch {
         console.warn(`  batch parse failure (attempt ${attempts}), regenerating`)
         continue

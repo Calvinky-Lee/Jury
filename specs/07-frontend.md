@@ -1,10 +1,10 @@
-# 07 — Frontend (Council HQ) — dedicated owner
+# 07 — Frontend (Sidebar HQ) — dedicated owner
 
 Next.js 15 (App Router) + Tailwind + Framer Motion, run locally on the demo laptop (`pnpm dev`) — no web hosting in v1. **One rendering path** consumes four sources: live SSE, DB replay, dev fixtures, demo mode — all shaped by the contract (spec 02).
 
 ## Theme & IP guardrail (non-negotiable)
 
-Inside-Out-*inspired* mind-headquarters vibe; the art is NOT Pixar's. Council members are **original little blob characters** (rounded mascot style, à la the Claude Code bot) built as **pure SVG/CSS** — each with a signature hue and a simple form from a fixed set. No Pixar/Disney assets, no traced emotion-character silhouettes, no Pixar names, no "Inside Out" branding. Memory orbs render as generic glowing spheres.
+Inside-Out-*inspired* mind-headquarters vibe; the art is NOT Pixar's. Sidebar members are **original little blob characters** (rounded mascot style, à la the Claude Code bot) built as **pure SVG/CSS** — each with a signature hue and a simple form from a fixed set. No Pixar/Disney assets, no traced emotion-character silhouettes, no Pixar names, no "Inside Out" branding. Memory orbs render as generic glowing spheres.
 
 ## State management
 
@@ -65,7 +65,7 @@ One per member, always in the same position, **fixed dimensions** (~30ch × 4 li
 - Top of the home screen and HQ: text search over past dilemmas (`GET /sessions?q=`, Mongo text index, spec 03). Debounced; results render as a filtered orb field plus a compact list (dilemma, date, ruling one-liner). Enter on a result → replay.
 
 ### PhaseTracker
-Always-visible six-step stepper driven by the reducer's `phase`: **understanding the case → convening the council → forming opinions → deliberating (reading each other) → pitches to the Chair → decision**. Current phase pulses; completed phases get a check. This makes the *thinking process* legible — each stage of how the answer was reached is a named, visible step, not a spinner.
+Always-visible six-step stepper driven by the reducer's `phase`: **understanding the case → convening the sidebar → forming opinions → deliberating (reading each other) → pitches to the Chair → decision**. Current phase pulses; completed phases get a check. This makes the *thinking process* legible — each stage of how the answer was reached is a named, visible step, not a spinner.
 
 ### PersonaCard (hover/click)
 Any member blob or nameplate: **hover** opens a compact popover (archetype, one-line decision style, top values); **click** pins the full card (adds biases, voice, domains, the model chip with routing reason, and the Chair's situation brief for *this* case). Data rides in `persona_cast` — no fetch. Also the hover tooltip body in the vector sidebar. Keyboard/touch: click-only fallback.
@@ -75,7 +75,7 @@ Toggled by the ⿻ button; slides in without disturbing the scene. Renders `cast
 - Each member is a **vector from the origin** to its `(x, y)` PCA coordinate, drawn in its `avatar.hue`.
 - Visual thesis: *the spread between vectors shows how behaviorally different the cast personalities are.* Pairwise separation as light arcs + the diversity ratio beneath.
 - **Hover a vector** (line or endpoint): that member's PersonaCard popover — the personality summary.
-- Populated at `casting_done`; before that, a "council being convened…" placeholder. Plot P2's per-session PCA data as-is (spec 05 §project.ts) — no client-side math. Plain SVG, no chart library.
+- Populated at `casting_done`; before that, a "sidebar being convened…" placeholder. Plot P2's per-session PCA data as-is (spec 05 §project.ts) — no client-side math. Plain SVG, no chart library.
 
 ## Event → theater mapping
 
@@ -97,7 +97,7 @@ Toggled by the ⿻ button; slides in without disturbing the scene. Renders `cast
 
 - `/` — home: orb field + search bar + *"file your case"* intake (dilemma textarea + optional context).
 - `/session/[id]` — live HQ (SSE via proxy).
-- `/replay/[id]` — finished session via proxy → council-service read endpoint; same reducer, adjustable speed.
+- `/replay/[id]` — finished session via proxy → sidebar-service read endpoint; same reducer, adjustable speed.
 - `/dev/replay` — fixture harness: pick a `.jsonl` fixture, replay at 1×/4×/instant. **Built first**; doubles as demo mode's UI.
 
 ## Definition of done

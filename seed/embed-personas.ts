@@ -7,7 +7,7 @@ import { readFileSync, writeFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import 'dotenv/config'
-import { embed } from '../apps/council-service/src/casting/embed'
+import { embed } from '../apps/sidebar-service/src/casting/embed'
 import { canonicalStanceText, type Persona } from '../packages/contract/src/persona'
 
 const HERE = dirname(fileURLToPath(import.meta.url))

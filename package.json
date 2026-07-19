@@ -1,12 +1,12 @@
 {
-  "name": "council",
+  "name": "sidebar",
   "private": true,
   "type": "module",
   "scripts": {
-    "dev:web": "pnpm --filter @council/web dev",
-    "dev:council": "pnpm --filter @council/service dev",
-    "dev": "concurrently -n web,council -c blue,magenta \"pnpm dev:web\" \"pnpm dev:council\"",
-    "demo": "concurrently -n web,council -c blue,magenta \"pnpm dev:web\" \"cross-env DEMO_MODE=1 pnpm dev:council\"",
+    "dev:web": "pnpm --filter @sidebar/web dev",
+    "dev:sidebar": "pnpm --filter @sidebar/service dev",
+    "dev": "concurrently -n web,sidebar -c blue,magenta \"pnpm dev:web\" \"pnpm dev:sidebar\"",
+    "demo": "concurrently -n web,sidebar -c blue,magenta \"pnpm dev:web\" \"cross-env DEMO_MODE=1 pnpm dev:sidebar\"",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",

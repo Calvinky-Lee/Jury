@@ -1,9 +1,0 @@
-import { serve } from "@hono/node-server";
-import { app } from "./app.js";
-import { env } from "./config/env.js";
-
-serve({ fetch: app.fetch, port: env.port }, (info) => {
-  console.log(
-    `[council-service] listening on http://localhost:${info.port}${env.demoMode ? " (DEMO_MODE=1)" : ""}`,
-  );
-});

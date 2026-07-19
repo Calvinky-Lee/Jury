@@ -1,6 +1,6 @@
-# The Council — Design Spec
+# The Sidebar — Design Spec
 
-*(product and code share the name now; UI copy uses "the Chair" and "council members")*
+*(product and code share the name now; UI copy uses "the Chair" and "sidebar members")*
 
 **Date:** 2026-07-18
 **Status:** Draft for team review — spec only, nothing implemented
@@ -11,15 +11,15 @@
 
 ## 1. Pitch
 
-Every consequential decision means chasing multiple people's opinions, doing background research, and writing up a recommendation. **The Council automates that entire workflow — as a mind headquarters.** Give it any real decision, and the Chair convenes the right council — sized to the case, 3–6 AI members — selected for *maximal relevant disagreement*, each a tool-using agent that researches before it argues, each an original little blob character in its own signature color. They give opening statements, rebut each other once, pitch the Chair, and the Chair issues a decision that preserves the split — ruling, devised solution plan, named dissent, and "what would change our mind" — exported as a shareable decision brief. Every finished case crystallizes into a **memory orb** that orbits overhead; a search bar recalls any past deliberation.
+Every consequential decision means chasing multiple people's opinions, doing background research, and writing up a recommendation. **The Sidebar automates that entire workflow — as a mind headquarters.** Give it any real decision, and the Chair convenes the right sidebar — sized to the case, 3–6 AI members — selected for *maximal relevant disagreement*, each a tool-using agent that researches before it argues, each an original little blob character in its own signature color. They give opening statements, rebut each other once, pitch the Chair, and the Chair issues a decision that preserves the split — ruling, devised solution plan, named dissent, and "what would change our mind" — exported as a shareable decision brief. Every finished case crystallizes into a **memory orb** that orbits overhead; a search bar recalls any past deliberation.
 
-**Theme & IP guardrail:** the vibe is Inside-Out-*inspired*; the art is NOT Pixar's. All characters are original simple blob designs (rounded mascot style, pure SVG/CSS — think "little robot/creature," not any Pixar emotion's silhouette), with original names and colors chosen by us. No Pixar/Disney assets, no traced designs, no emotion-character names (Joy, Sadness, …), no "Inside Out" branding in the app. Memory orbs are rendered as generic glowing spheres. Internal system names stay theme-neutral (Chair/council in code and UI).
+**Theme & IP guardrail:** the vibe is Inside-Out-*inspired*; the art is NOT Pixar's. All characters are original simple blob designs (rounded mascot style, pure SVG/CSS — think "little robot/creature," not any Pixar emotion's silhouette), with original names and colors chosen by us. No Pixar/Disney assets, no traced designs, no emotion-character names (Joy, Sadness, …), no "Inside Out" branding in the app. Memory orbs are rendered as generic glowing spheres. Internal system names stay theme-neutral (Chair/sidebar in code and UI).
 
 **One-liner:** better decisions through engineered disagreement.
 
-**Phoebe framing:** The Council is an AI *teammate panel* you convene on demand. It automates the repetitive work of decision-making (perspective-gathering, research, synthesis) and turns a week of Slack threads into a structured decision memo in ~90 seconds.
+**Phoebe framing:** The Sidebar is an AI *teammate panel* you convene on demand. It automates the repetitive work of decision-making (perspective-gathering, research, synthesis) and turns a week of Slack threads into a structured decision memo in ~90 seconds.
 
-**Novelty claim (say this explicitly in the pitch):** multi-persona LLM deliberation is a known pattern. Our differentiation is (1) situation-tailored persona *casting* instead of hardcoded characters, (2) *measured* diversity enforcement — a number on screen, not vibes, (3) *preserved disagreement* — the verdict celebrates the dissent instead of averaging it away, and (4) **multi-model capability routing** — council seats run on *different LLMs*, each chosen from a benchmarked capability matrix (empathy, rigor, creativity, groundedness, voice fidelity) to fit what this dilemma demands (specs 04 + 08).
+**Novelty claim (say this explicitly in the pitch):** multi-persona LLM deliberation is a known pattern. Our differentiation is (1) situation-tailored persona *casting* instead of hardcoded characters, (2) *measured* diversity enforcement — a number on screen, not vibes, (3) *preserved disagreement* — the verdict celebrates the dissent instead of averaging it away, and (4) **multi-model capability routing** — sidebar seats run on *different LLMs*, each chosen from a benchmarked capability matrix (empathy, rigor, creativity, groundedness, voice fidelity) to fit what this dilemma demands (specs 04 + 08).
 
 ## 2. Product definition
 
@@ -34,7 +34,7 @@ Getting a well-rounded read on a hard decision today means chasing several peopl
 - **Dilemma scope: general-purpose** within the above. The demo script should skew toward business/work decisions to land the Phoebe framing (e.g., "should our startup switch to annual billing?"), with one funny dilemma for charm.
 - **Input:** free-text dilemma plus optional context (constraints, background, links).
 - **Output:** a live-streamed deliberation ending in a structured verdict, persisted with a replay URL and an exportable decision brief (Markdown). Finished sessions appear as **memory orbs** on the home screen and are searchable by their dilemma text.
-- **Non-goals (v1):** auth/accounts, voice, mobile-native, multi-council sessions, persona fine-tuning, councils larger than 6.
+- **Non-goals (v1):** auth/accounts, voice, mobile-native, multi-sidebar sessions, persona fine-tuning, sidebars larger than 6.
 
 ## 3. Architecture
 
@@ -42,20 +42,20 @@ Three deployable pieces, one shared contract. Single-language TypeScript monorep
 
 | Piece | Tech | Hosting | Purpose |
 |---|---|---|---|
-| Frontend | Next.js + Tailwind + Framer Motion | local (`pnpm dev`) | The Council HQ UI |
-| Council service | Node + Hono, SSE | local (`pnpm dev`) | Runs deliberations, streams events, serves replay reads; separate process so 90s streams never fight the web app |
+| Frontend | Next.js + Tailwind + Framer Motion | local (`pnpm dev`) | The Sidebar HQ UI |
+| Sidebar service | Node + Hono, SSE | local (`pnpm dev`) | Runs deliberations, streams events, serves replay reads; separate process so 90s streams never fight the web app |
 | Database | MongoDB Atlas (+ Atlas Vector Search) | Atlas | Persona library, session persistence, event replay. Voyage AI (our embedding provider) is MongoDB-owned — first-class pairing |
 | `packages/contract` | TypeScript + zod | shared package | Every SSE event, stance, verdict, and persona shape. **Hour-0 deliverable, co-signed by all four.** |
 
-Council members are Gemini function-calling/grounding loops (Flash tier for speed) with two tools: **Google Search grounding** and a **calculator**. The Chair (orchestrator) uses the Pro tier for the verdict. Exact model IDs pinned at hour 0 (spec 04).
+Sidebar members are Gemini function-calling/grounding loops (Flash tier for speed) with two tools: **Google Search grounding** and a **calculator**. The Chair (orchestrator) uses the Pro tier for the verdict. Exact model IDs pinned at hour 0 (spec 04).
 
 ## 4. Deliberation pipeline (the Chair)
 
 Six phases, all streamed as SSE events and all individually visible in the UI's phase tracker (spec 07):
 
 1. **Intake** — parse the dilemma; extract the axes of tension (risk vs. reward, principle vs. pragmatism, short vs. long term). UI: *"understanding the case."*
-2. **Casting** — embed the dilemma → retrieve top-25 relevant personas via Atlas Vector Search → **MMR selection** (λ≈0.6) picks N that are relevant *and* mutually distant (N = council size the Chair chose at intake from the axes of tension, clamped 3–6, default 4). Members pop onto screen one by one as they're decided; hover/click any member for their personality card. The Chair writes each a **situation brief**: same core identity, specialized to this dilemma. This satisfies "traits tailored to the situation" without giving up a persistent library.
-3. **Opening statements** — the N council agents run in parallel. Each emits a structured stance `{recommendation, confidence, key_reasons}` plus a spoken answer in its voice. Tool calls stream to the UI ("🔍 The Actuary is searching: SaaS annual billing churn rates"). UI: *"forming opinions."*
+2. **Casting** — embed the dilemma → retrieve top-25 relevant personas via Atlas Vector Search → **MMR selection** (λ≈0.6) picks N that are relevant *and* mutually distant (N = sidebar size the Chair chose at intake from the axes of tension, clamped 3–6, default 4). Members pop onto screen one by one as they're decided; hover/click any member for their personality card. The Chair writes each a **situation brief**: same core identity, specialized to this dilemma. This satisfies "traits tailored to the situation" without giving up a persistent library.
+3. **Opening statements** — the N sidebar agents run in parallel. Each emits a structured stance `{recommendation, confidence, key_reasons}` plus a spoken answer in its voice. Tool calls stream to the UI ("🔍 The Actuary is searching: SaaS annual billing churn rates"). UI: *"forming opinions."*
 4. **Rebuttal round** — each agent sees the other three stances and gives one rebuttal; may update its stance (updates are tracked — see KPIs). UI: *"deliberating — ingesting each other's opinions."*
 5. **Closing pitches** — each member addresses the Chair directly with a ≤60-word closing argument and its final, locked stance. N small parallel calls — cheap, fast, and the beat that makes "pitching your solution to the orchestrator" visible.
 6. **Verdict** — the Chair rules: `{ruling, solution_plan, vote_split, majority_reasoning, dissent, confidence, what_would_change_our_mind}`. The **ruling** is the Chair's direct personal answer to the question; the **solution plan** is a devised optimal solution mixing the strongest elements across members — not just picking a side. Disagreement is never averaged away. The verdict renders as an exportable decision brief.
@@ -80,11 +80,11 @@ Every event persists to the DB with a sequence number → SSE reconnect resumes 
 
 ## 7. Data model (MongoDB Atlas)
 
-Collections: `personas` (with `embedding` + Atlas Vector Search index), `sessions`, `castings`, `statements` (phase ∈ opening/rebuttal/closing), `verdicts`, `events` (the replay log, `{session_id, seq, type, payload}`). Full shapes and indexes: spec 03. Frontend never reads Atlas directly — finished sessions are served by a read endpoint on the council service.
+Collections: `personas` (with `embedding` + Atlas Vector Search index), `sessions`, `castings`, `statements` (phase ∈ opening/rebuttal/closing), `verdicts`, `events` (the replay log, `{session_id, seq, type, payload}`). Full shapes and indexes: spec 03. Frontend never reads Atlas directly — finished sessions are served by a read endpoint on the sidebar service.
 
-## 8. Frontend (Council HQ)
+## 8. Frontend (Sidebar HQ)
 
-A flat-2D **mind-headquarters** scene: the **Chair** on a center-back platform, the council's blob characters (3–6, sized to the case) ringed around it, and a field of **memory orbs** (past cases) orbiting above, with a **search bar over past conversations** at the top. A **phase tracker** makes each stage of thinking legible: understanding the case → convening the council → forming opinions → deliberating (ingesting each other's views) → pitches to the Chair → decision. Convening is theater: members pop onto screen one by one as they're decided, and **hovering or clicking any member opens their personality card** (archetype, values, biases, decision style, situation brief). Speech bubbles stream token-by-token with simple state animations; tool-use chips appear beneath a member while its agent researches. Rebuttals visually quote the target member's words. Pitches turn each member toward the Chair. The decision is the theater beat: vote-split bar in member hues, the Chair's answer + step-by-step solution plan, dissenting member spotlighted, "what would change our mind," decision-brief export — then the **crystallization**: the case condenses into a new memory orb that floats up to join the field. A **sidebar toggle opens the vector graph**: each member's personality embedding projected to 2D in its signature hue, visually showing how far apart the cast personalities sit — hover a vector for that personality's summary. Built against **recorded event streams** from day one so frontend never blocks on backend.
+A flat-2D **mind-headquarters** scene: the **Chair** on a center-back platform, the sidebar's blob characters (3–6, sized to the case) ringed around it, and a field of **memory orbs** (past cases) orbiting above, with a **search bar over past conversations** at the top. A **phase tracker** makes each stage of thinking legible: understanding the case → convening the sidebar → forming opinions → deliberating (ingesting each other's views) → pitches to the Chair → decision. Convening is theater: members pop onto screen one by one as they're decided, and **hovering or clicking any member opens their personality card** (archetype, values, biases, decision style, situation brief). Speech bubbles stream token-by-token with simple state animations; tool-use chips appear beneath a member while its agent researches. Rebuttals visually quote the target member's words. Pitches turn each member toward the Chair. The decision is the theater beat: vote-split bar in member hues, the Chair's answer + step-by-step solution plan, dissenting member spotlighted, "what would change our mind," decision-brief export — then the **crystallization**: the case condenses into a new memory orb that floats up to join the field. A **sidebar toggle opens the vector graph**: each member's personality embedding projected to 2D in its signature hue, visually showing how far apart the cast personalities sit — hover a vector for that personality's summary. Built against **recorded event streams** from day one so frontend never blocks on backend.
 
 **Character art:** original blob characters only (§1 IP guardrail) — pure SVG/CSS (12 hues × ~4 forms, states: idle/talking/dissent), no image assets, no art pipeline. A member's hue is its identity color everywhere: body, nameplate, bubbles, vector graph, and its share of a memory orb. Full detail: spec 07.
 
@@ -95,7 +95,7 @@ Two halves — is the *deliberation* real, and is the *output* useful — plus o
 ### Deliberation quality (is disagreement engineered, not performed)
 | Metric | Definition | Target |
 |---|---|---|
-| Council diversity score | Mean pairwise embedding distance of cast vs. random-cast baseline | ≥ 1.3× baseline |
+| Sidebar diversity score | Mean pairwise embedding distance of cast vs. random-cast baseline | ≥ 1.3× baseline |
 | Genuine-dissent rate | % of sessions with ≥1 differing recommendation before rebuttal | ≥ 75% |
 | Stance-update rate | % of rebuttals producing a stance change | 10–40% band (0% = theater; higher = sycophancy) |
 
@@ -104,7 +104,7 @@ Two halves — is the *deliberation* real, and is the *output* useful — plus o
 |---|---|---|
 | Verdict fidelity | Judge: does the ruling honestly reflect the vote split and preserve dissent? (1–5) | ≥ 4.0 mean |
 | Actionability | Judge: concrete recommendation + conditions + "what would change our mind" present? (1–5) | ≥ 4.0 mean |
-| Groundedness | % of councillors citing ≥1 real tool result per session | ≥ 50% |
+| Groundedness | % of sidebarlors citing ≥1 real tool result per session | ≥ 50% |
 
 ### Ops
 | Metric | Target |
@@ -122,7 +122,7 @@ Two halves — is the *deliberation* real, and is the *output* useful — plus o
 - SSE reconnect with replay from last event ID — a mid-deliberation refresh loses nothing.
 - Per-agent timeout + recusal path (§4) — one dead agent never kills a session.
 - **Demo mode:** a recorded golden session replayable fully offline. Mandatory hackathon insurance for dead wifi.
-- Per-session cost cap; simple bearer token on the council service.
+- Per-session cost cap; simple bearer token on the sidebar service.
 
 ## 11. Testing (hackathon-weight)
 
@@ -150,7 +150,7 @@ Two halves — is the *deliberation* real, and is the *output* useful — plus o
 3. Embedding strategy: stance-profile canonical text; default Voyage `voyage-3` (P2 may swap with a one-line rationale in this doc)
 4. Atlas Vector Search index + similarity queries; 2D PCA projection for the sidebar vector graph
 5. MMR casting (λ≈0.6) with deterministic tests on fixed embeddings
-6. Council diversity score + random-baseline normalization
+6. Sidebar diversity score + random-baseline normalization
 7. Casting API surface consumed by P1
 8. *Stretch:* output-diversity gate
 
@@ -168,7 +168,7 @@ Two halves — is the *deliberation* real, and is the *output* useful — plus o
 
 ### P4 — Platform & Runtime
 1. **Hour-0:** monorepo + `packages/contract` zod schemas — all four sign off
-2. Council service (Hono): `POST /sessions`, `GET /sessions/:id/stream`
+2. Sidebar service (Hono): `POST /sessions`, `GET /sessions/:id/stream`
 3. Event persistence + resume-from-last-event-id
 4. Tool implementations: web search + calculator, typed result schemas
 5. MongoDB Atlas collections, indexes, and the session read endpoint (§7)

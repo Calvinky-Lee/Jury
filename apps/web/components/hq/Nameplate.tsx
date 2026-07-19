@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import type { CastMember } from "@council/contract";
+import type { CastMember } from "@sidebar/contract";
 
 interface NameplateProps {
   member: CastMember;

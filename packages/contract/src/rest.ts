@@ -39,7 +39,7 @@ export const SessionMetadataSchema = z.object({
   id: z.string(),
   dilemma: z.string(),
   context: z.string().optional(),
-  councilSize: z.number().int().min(3).max(6).optional(),
+  sidebarSize: z.number().int().min(3).max(6).optional(),
   status: SessionStatusSchema,
   createdAt: z.string(),
 });

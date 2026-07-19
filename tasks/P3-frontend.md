@@ -1,6 +1,6 @@
-# P3 — Frontend (Council HQ) — the dedicated frontend person
+# P3 — Frontend (Sidebar HQ) — the dedicated frontend person
 
-**Mission:** Own the demo. The deliberation takes 60–90 seconds — your streaming UI is what turns that latency into the show. The show is a **mind headquarters**: the Chair on its platform, 3–6 colored blob council members ringed around it, memory orbs of past cases orbiting above, a search bar over past conversations. You touch ONLY the event contract + the REST read endpoints; you must never be blocked on the backend.
+**Mission:** Own the demo. The deliberation takes 60–90 seconds — your streaming UI is what turns that latency into the show. The show is a **mind headquarters**: the Chair on its platform, 3–6 colored blob sidebar members ringed around it, memory orbs of past cases orbiting above, a search bar over past conversations. You touch ONLY the event contract + the REST read endpoints; you must never be blocked on the backend.
 
 **IP guardrail (non-negotiable):** Inside-Out-*inspired* vibe, zero Pixar/Disney assets, traced emotion-character silhouettes, or Pixar names. Characters are original SVG/CSS blobs; orbs are generic glowing spheres. See spec 07.
 
@@ -33,7 +33,7 @@
 ## Checkpoints
 
 - **Hour ~6:** full fake recorded stream renders end-to-end — convening through crystallization — via the dev harness. The team's first integration checkpoint is yours.
-- **Hour ~12:** same rendering path consuming the real skeleton deliberation from the local council service.
+- **Hour ~12:** same rendering path consuming the real skeleton deliberation from the local sidebar service.
 - **After:** polish ordered by demo impact: decision theater + crystallization → tool chips → convening → orbs/search → sidebar.
 
 ## Definition of done

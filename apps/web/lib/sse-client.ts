@@ -1,7 +1,7 @@
-import type { ContractEvent } from "@council/contract";
+import type { ContractEvent } from "@sidebar/contract";
 
 // The backend writes a named `event:` field per contract event type (spec 02 /
-// council-service's streamSSE), so `EventSource.onmessage` never fires — every
+// sidebar-service's streamSSE), so `EventSource.onmessage` never fires — every
 // type needs its own listener.
 const EVENT_TYPES: ContractEvent["type"][] = [
   "session_started",

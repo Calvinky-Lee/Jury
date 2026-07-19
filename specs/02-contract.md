@@ -83,9 +83,9 @@ Event<T> { seq: number, sessionId: string, ts: string, type: string, payload: T 
 | type | payload | notes |
 |---|---|---|
 | `session_started` | `{ dilemma, context? }` | |
-| `dilemma_parsed` | `{ summary, axesOfTension: string[], councilSize: number, capabilityWeights }` | from intake; N clamped 3–6, default 4; weights drive model routing |
-| `casting_started` | `{ poolSize, councilSize }` | |
-| `persona_cast` | `{ member: CastMember, seat: number, runningDiversityScore, initialRead: string }` | ×N (councilSize), seat 0..N-1; `initialRead` = ≤140-char first take on the problem (distilled from the situation brief) → the member's first thinking bubble |
+| `dilemma_parsed` | `{ summary, axesOfTension: string[], sidebarSize: number, capabilityWeights }` | from intake; N clamped 3–6, default 4; weights drive model routing |
+| `casting_started` | `{ poolSize, sidebarSize }` | |
+| `persona_cast` | `{ member: CastMember, seat: number, runningDiversityScore, initialRead: string }` | ×N (sidebarSize), seat 0..N-1; `initialRead` = ≤140-char first take on the problem (distilled from the situation brief) → the member's first thinking bubble |
 | `casting_done` | `{ diversityScore, baselineRatio, vectorMap: VectorPoint[] }` | ratio is the ≥1.3× KPI number; vectorMap feeds the sidebar graph |
 | `statement_started` | `{ personaId, phase: 'opening' }` | |
 | `statement_delta` | `{ personaId, text }` | token/chunk streaming |

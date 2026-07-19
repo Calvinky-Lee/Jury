@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import type { Verdict } from "@council/contract";
+import type { Verdict } from "@sidebar/contract";
 import { VoteSplitBar } from "@/components/hq/VoteSplitBar";
 import type { MemberView } from "@/lib/session-store";
 

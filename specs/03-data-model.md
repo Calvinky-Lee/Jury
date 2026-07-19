@@ -22,12 +22,12 @@ MongoDB Atlas (free M0 tier) with **Atlas Vector Search** for the persona librar
 }
 
 // sessions
-{ _id: uuid, dilemma: string, context?: string, councilSize: int,
+{ _id: uuid, dilemma: string, context?: string, sidebarSize: int,
   status: string,               // SessionStatus enum (contract)
   createdAt: Date }
 
 // castings — one doc per seat
-{ sessionId: uuid, personaId: ObjectId, seat: int,   // 0..councilSize-1
+{ sessionId: uuid, personaId: ObjectId, seat: int,   // 0..sidebarSize-1
   situationBrief: string, mmrScore: number, modelId: string,   // capability routing (spec 04)
   diversityScore?: number, vectorPoint?: { x: number, y: number } }
 
@@ -63,8 +63,8 @@ Retrieval query (spec 05) uses the `$vectorSearch` aggregation stage: `{ index: 
 
 ## Access policy
 
-- **Only the council service talks to Atlas** (`MONGODB_URI` lives solely in the council service's local `.env`). There is no browser-safe read credential in MongoDB's model — so, unlike a Supabase/RLS design, the frontend NEVER reads the DB directly.
-- Finished sessions are served by read endpoints on the council service: `GET /sessions/:id/events`, `GET /sessions/:id`, and `GET /sessions?q=` (list/search — text index above — powering the memory-orb field and search bar), consumed via the Next.js proxy. Replay pages and the golden-session recorder use the same endpoints.
+- **Only the sidebar service talks to Atlas** (`MONGODB_URI` lives solely in the sidebar service's local `.env`). There is no browser-safe read credential in MongoDB's model — so, unlike a Supabase/RLS design, the frontend NEVER reads the DB directly.
+- Finished sessions are served by read endpoints on the sidebar service: `GET /sessions/:id/events`, `GET /sessions/:id`, and `GET /sessions?q=` (list/search — text index above — powering the memory-orb field and search bar), consumed via the Next.js proxy. Replay pages and the golden-session recorder use the same endpoints.
 - No user accounts in v1. Session ids are unguessable uuids; a share link is possession-based access. Acceptable for a hackathon; noted as a non-goal.
 
 ## Notes

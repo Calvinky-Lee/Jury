@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useReducer, useRef, useState } from "react";
-import type { ContractEvent } from "@council/contract";
+import type { ContractEvent } from "@sidebar/contract";
 import { hqReducer, initialHqState, type HqState } from "./session-store";
 import { connectSession } from "./sse-client";
 

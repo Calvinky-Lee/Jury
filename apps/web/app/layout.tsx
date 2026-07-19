@@ -14,7 +14,7 @@ const nunito = Nunito({
 });
 
 export const metadata: Metadata = {
-  title: "The Council",
+  title: "The Sidebar",
   description: "Better decisions through engineered disagreement.",
 };
 

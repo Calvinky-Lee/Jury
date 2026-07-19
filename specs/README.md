@@ -13,7 +13,7 @@ Spec-first project: **nothing is implemented until the team signs off on these d
 | 04 | [Deliberation engine](04-deliberation-engine.md) | P1 | State machine, prompts, orchestration, timeouts |
 | 05 | [Persona system](05-persona-system.md) | P2 | Library generation, embeddings, MMR, diversity score |
 | 06 | [Tools](06-tools.md) | P4 | Google Search grounding + calculator tool specs |
-| 07 | [Frontend](07-frontend.md) | P3 | Council HQ UI, blob characters, memory orbs, search, SSE client |
+| 07 | [Frontend](07-frontend.md) | P3 | Sidebar HQ UI, blob characters, memory orbs, search, SSE client |
 | 08 | [Evaluation](08-evaluation.md) | P1 | KPIs, eval harness, LLM-judge rubrics |
 | 09 | [Infra, env & API keys](09-infra-and-keys.md) | P4 | Local-first run, every env var and API key, demo mode, rate limits |
 

@@ -40,7 +40,7 @@ export function outwardPoint(pos: SeatPosition, outwardPct: number): { x: number
   };
 }
 
-/** ThinkBubble steps down one size notch once the council is 5 or 6 strong (spec 07). */
-export function bubbleSizeNotch(councilSize: number): "normal" | "compact" {
-  return councilSize >= 5 ? "compact" : "normal";
+/** ThinkBubble steps down one size notch once there are 5 or 6 members (spec 07). */
+export function bubbleSizeNotch(sidebarSize: number): "normal" | "compact" {
+  return sidebarSize >= 5 ? "compact" : "normal";
 }

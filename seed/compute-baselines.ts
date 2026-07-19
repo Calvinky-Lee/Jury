@@ -1,19 +1,19 @@
 /**
  * Diversity baseline precompute (spec 05): sample 1,000 random casts at EACH
- * council size n ∈ 3–6 over the loaded library; write DIVERSITY_BASELINE[n]
- * into apps/council-service/src/casting/baselines.json with the batch id.
+ * sidebar size n ∈ 3–6 over the loaded library; write DIVERSITY_BASELINE[n]
+ * into apps/sidebar-service/src/casting/baselines.json with the batch id.
  * The UI ratio = cast diversity / baseline — targets ≥ 1.3×.
  */
 import { writeFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import 'dotenv/config'
-import { diversityScore } from '../apps/council-service/src/casting/diversity'
-import { closeDb, getDb } from '../apps/council-service/src/db/client'
+import { diversityScore } from '../apps/sidebar-service/src/casting/diversity'
+import { closeDb, getDb } from '../apps/sidebar-service/src/db/client'
 
 const OUT = join(
   dirname(fileURLToPath(import.meta.url)),
-  '../apps/council-service/src/casting/baselines.json',
+  '../apps/sidebar-service/src/casting/baselines.json',
 )
 const SAMPLES = 1000
 

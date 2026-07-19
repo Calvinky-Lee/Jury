@@ -1,12 +1,12 @@
 # P2 — Persona System
 
-**Mission:** Own the persona library and the casting math. Your job is that the vector DB is *load-bearing*: casting must produce councils that are relevant to the dilemma AND measurably more diverse than random — that number goes on screen.
+**Mission:** Own the persona library and the casting math. Your job is that the vector DB is *load-bearing*: casting must produce sidebars that are relevant to the dilemma AND measurably more diverse than random — that number goes on screen.
 
 **Spec:** `../specs/00-overview.md` (§5 persona system, §7 data model)
 
 ## What you provide / what you consume
 
-- **Provide:** the casting API P1 calls — `castCouncil(dilemma text) → { members: [4 × {identity, stance_profile, mmr_score}], diversity_score, baseline_ratio, vector_map }`.
+- **Provide:** the casting API P1 calls — `castSidebar(dilemma text) → { members: [4 × {identity, stance_profile, mmr_score}], diversity_score, baseline_ratio, vector_map }`.
 - **Consume:** P4's MongoDB Atlas cluster and index-setup workflow; the persona schema slot in `packages/contract`.
 - **Contract ownership:** persona schema (identity fields vs. stance-profile fields) and the `persona_cast` event payload.
 

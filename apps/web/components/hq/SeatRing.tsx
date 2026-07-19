@@ -12,7 +12,7 @@ import { bubbleSizeNotch, seatLayout } from "@/lib/radial";
 import type { MemberView } from "@/lib/session-store";
 
 interface SeatRingProps {
-  councilSize: number;
+  sidebarSize: number;
   seatOrder: (string | null)[];
   members: Record<string, MemberView>;
   onPin?: (title: string, text: string) => void;
@@ -44,14 +44,14 @@ function StanceChangeBanner() {
 }
 
 export function SeatRing({
-  councilSize,
+  sidebarSize,
   seatOrder,
   members,
   onPin,
   dissentPersonaId,
 }: SeatRingProps) {
-  const positions = seatLayout(councilSize);
-  const compact = bubbleSizeNotch(councilSize) === "compact";
+  const positions = seatLayout(sidebarSize);
+  const compact = bubbleSizeNotch(sidebarSize) === "compact";
 
   return (
     <>

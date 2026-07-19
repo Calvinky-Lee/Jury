@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
-import type { SessionSummary, BlobHue } from "@council/contract";
+import type { SessionSummary, BlobHue } from "@sidebar/contract";
 import { HUES } from "@/lib/blobs";
 
 interface OrbFieldProps {
@@ -35,7 +35,7 @@ export function OrbField({ searchResults }: OrbFieldProps) {
   if (unreachable && !searchResults) {
     return (
       <p className="font-sans text-sm text-ink-soft">
-        no memories yet — council service isn&apos;t running
+        no memories yet — sidebar service isn&apos;t running
       </p>
     );
   }

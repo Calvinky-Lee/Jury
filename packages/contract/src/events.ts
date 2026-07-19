@@ -36,14 +36,14 @@ export const DilemmaParsedEvent = envelope(
   z.object({
     summary: z.string(),
     axesOfTension: z.array(z.string()),
-    councilSize: z.number().int().min(3).max(6),
+    sidebarSize: z.number().int().min(3).max(6),
     capabilityWeights: z.record(z.string(), z.number()).optional(),
   }),
 );
 
 export const CastingStartedEvent = envelope(
   "casting_started",
-  z.object({ poolSize: z.number().int(), councilSize: z.number().int().min(3).max(6) }),
+  z.object({ poolSize: z.number().int(), sidebarSize: z.number().int().min(3).max(6) }),
 );
 
 // reuses P2's persona_cast payload shape (spec 02 / packages/contract/src/persona.ts)

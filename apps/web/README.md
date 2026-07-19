@@ -1,6 +1,6 @@
-# @council/web
+# @sidebar/web
 
-Frontend for The Council (spec 07). Next.js App Router + Tailwind + Framer Motion.
+Frontend for The Sidebar (spec 07). Next.js App Router + Tailwind + Framer Motion.
 
 ```
 pnpm dev:web      # from the repo root

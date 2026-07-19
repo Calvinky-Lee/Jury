@@ -1,11 +1,11 @@
 "use client";
 
 import { motion } from "framer-motion";
-import type { Phase } from "@council/contract";
+import type { Phase } from "@sidebar/contract";
 
 const STEPS: { phase: Phase; label: string }[] = [
   { phase: "intake", label: "Understanding the case" },
-  { phase: "casting", label: "Convening the council" },
+  { phase: "casting", label: "Convening the Sidebar" },
   { phase: "statements", label: "Forming opinions" },
   { phase: "rebuttal", label: "Deliberating" },
   { phase: "closing", label: "Pitches to the Chair" },

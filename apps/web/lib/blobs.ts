@@ -1,9 +1,9 @@
-import { PALETTE, BLOB_FORMS, type BlobHue, type BlobForm } from "@council/contract";
+import { PALETTE, BLOB_FORMS, type BlobHue, type BlobForm } from "@sidebar/contract";
 
 export { PALETTE as HUES, BLOB_FORMS };
 export type { BlobHue, BlobForm };
 
-/** Seat-assignment order for councilSize <= 12 (spec 07 — hue is identity color everywhere). */
+/** Seat-assignment order for sidebarSize <= 12 (spec 07 — hue is identity color everywhere). */
 export const HUE_ORDER: BlobHue[] = [
   "sky",
   "ember",

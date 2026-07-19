@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import type { SessionSummary } from "@council/contract";
+import type { SessionSummary } from "@sidebar/contract";
 import { IntakeForm } from "@/components/intake/IntakeForm";
 import { Blob } from "@/components/hq/Blob";
 import { BackgroundDoodles } from "@/components/BackgroundDoodles";
@@ -30,9 +30,9 @@ export default function Home() {
         </div>
 
         <div className="flex flex-col items-center gap-2 text-center">
-          <h1 className="font-hand text-5xl text-ink sm:text-6xl">The Council</h1>
+          <h1 className="font-hand text-5xl text-ink sm:text-6xl">The Sidebar</h1>
           <p className="max-w-md font-sans text-ink-soft">
-            File your case. The Chair convenes a council of 3–6 AI members, sized to the
+            File your case. The Chair convenes a Sidebar of 3–6 AI members, sized to the
             dilemma, to argue it out and deliver a verdict.
           </p>
         </div>

@@ -24,7 +24,7 @@ Domains: {domains, comma-joined}
 
 - Model: **Voyage `voyage-3`**, 1024 dims, `input_type: 'document'` for personas, `'query'` for dilemmas. Swappable behind one function (`embed(text, kind)`); swapping requires re-seeding and a rationale line here.
 - One batch call at seed time → `personas.embedding` via `seed/load-mongo.ts` (Atlas Vector Search index per spec 03; Voyage being MongoDB-owned makes this pairing first-class).
-- **Baseline precompute:** sample 1,000 random casts at EACH council size n ∈ 3–6; store mean pairwise cosine distance as `DIVERSITY_BASELINE[n]` (constants checked into `casting/diversity.ts` with the seed batch id). The UI ratio = cast diversity / baseline.
+- **Baseline precompute:** sample 1,000 random casts at EACH sidebar size n ∈ 3–6; store mean pairwise cosine distance as `DIVERSITY_BASELINE[n]` (constants checked into `casting/diversity.ts` with the seed batch id). The UI ratio = cast diversity / baseline.
 
 ## Casting at query time (`casting/`)
 
@@ -54,7 +54,7 @@ PCA over the **top-25 retrieval pool** (not just the cast — the pool defines t
 ## API provided to P1
 
 ```ts
-castCouncil(parsedDilemma: string, size: number): Promise<{   // size = intake's councilSize, 3–6
+castSidebar(parsedDilemma: string, size: number): Promise<{   // size = intake's sidebarSize, 3–6
   members: CastMember[]        // N, seats 0..N-1, WITHOUT situationBrief (P1 writes those)
   diversityScore: number
   baselineRatio: number

@@ -1,4 +1,4 @@
-import type { VoteSplit } from "@council/contract";
+import type { VoteSplit } from "@sidebar/contract";
 import { HUES } from "@/lib/blobs";
 import type { MemberView } from "@/lib/session-store";
 
