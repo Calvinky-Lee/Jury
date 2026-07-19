@@ -3,12 +3,12 @@
  * persona embeddings plus the standard indexes. Run after seed:load.
  */
 import 'dotenv/config'
-import { closeDb, getDb } from '../apps/council-service/src/db/mongo'
+import { closeDb, getDb } from '../apps/council-service/src/db/client'
 import { EMBEDDING_DIMS } from '../apps/council-service/src/casting/embed'
 import { VECTOR_INDEX } from '../apps/council-service/src/casting/retrieve'
 
 async function main() {
-  const db = getDb()
+  const db = await getDb()
 
   // Atlas can't create a search index on a collection that doesn't exist yet.
   await db.createCollection('personas').catch(() => {})

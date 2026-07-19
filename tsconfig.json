@@ -12,6 +12,8 @@
     "packages/*/test/**/*",
     "apps/*/src/**/*",
     "apps/*/test/**/*",
+    "apps/*/scripts/**/*",
+    "apps/*/eval/**/*",
     "seed/**/*"
   ]
 }

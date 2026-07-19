@@ -1,37 +1,19 @@
 import { z } from 'zod';
+import {
+  StanceSchema,
+  VerdictSchema,
+  type Stance,
+  type Verdict,
+  type Phase,
+  type SessionStatus,
+  type Avatar,
+} from '@council/contract';
 
-// Mirrors specs/02-contract.md §stance.ts / §verdict.ts.
-// packages/contract does not exist yet (P4's hour-0 deliverable) — this is a
-// deliberate, clearly-labeled stand-in so P1 isn't blocked. Reconcile field-for-field
-// with packages/contract at hour 0; do not let this silently diverge.
-
-export const StanceSchema = z.object({
-  recommendation: z.string().min(1),
-  confidence: z.number().min(0).max(1),
-  keyReasons: z.array(z.string().min(1)).min(2).max(4),
-});
-export type Stance = z.infer<typeof StanceSchema>;
-
-export const VerdictSchema = z.object({
-  ruling: z.string().min(1),
-  solutionPlan: z.array(z.string().min(1)).min(3).max(6),
-  voteSplit: z.object({
-    for: z.array(z.string()),
-    against: z.array(z.string()),
-    abstain: z.array(z.string()),
-  }),
-  majorityReasoning: z.string().min(1),
-  dissent: z
-    .object({
-      who: z.string(),
-      position: z.string().min(1),
-      whyItMatters: z.string().min(1),
-    })
-    .nullable(),
-  confidence: z.number().min(0).max(1),
-  whatWouldChangeOurMind: z.array(z.string().min(1)).min(2).max(3),
-});
-export type Verdict = z.infer<typeof VerdictSchema>;
+// Stance/Verdict/Phase/SessionStatus now come from @council/contract (P4's hour-0
+// deliverable, landed after this file was first written as a stand-in — reconciled
+// here rather than left to silently diverge, per this file's own original warning).
+export { StanceSchema, VerdictSchema };
+export type { Stance, Verdict, Phase, SessionStatus };
 
 // Just enough persona shape to build prompts without depending on P2's full
 // persona/casting system (spec 05 owns the real thing).
@@ -48,15 +30,14 @@ export interface MemberTranscript {
   closing: string;
 }
 
-// Mirrors specs/02-contract.md §phases.ts.
+// Mirrors specs/02-contract.md §phases.ts (kept local as a plain array for
+// state-machine.ts's iteration; the `Phase`/`SessionStatus` *types* above are the
+// contract's real ones).
 export const PHASES = ['intake', 'casting', 'statements', 'rebuttal', 'closing', 'verdict'] as const;
-export type Phase = (typeof PHASES)[number];
-export type SessionStatus = 'created' | Phase | 'done' | 'failed';
 
 // Intake output (spec 04 §intake.ts). Note: the contract's `dilemma_parsed` SSE
 // payload (spec 02) only carries `summary`/`axesOfTension`/`councilSize` —
 // `decisionType` is used internally (eval-set categorization) and isn't emitted.
-// Flag for hour-0 reconciliation if that changes.
 export const IntakeResultSchema = z.object({
   summary: z.string().min(1),
   axesOfTension: z.array(z.string().min(1)).min(2).max(6),
@@ -69,11 +50,18 @@ export type IntakeResult = z.infer<typeof IntakeResultSchema>;
 // (CastMemberLite) plus the stance-profile fields spec 05 owns for real
 // (P2's persona/casting system). This is a local stand-in, same caveat as
 // CastMemberLite above.
+//
+// `avatar`/`domains` are optional here (existing Fakes/tests don't set them)
+// but the orchestrator spreads this shape straight into the `persona_cast`
+// wire event, whose `CastMember` (spec 02, packages/contract/src/persona.ts)
+// requires both — the real CastingProvider adapter always populates them.
 export interface PersonaForBrief extends CastMemberLite {
   voice: string;
   coreValues: string[];
   biases: string[];
   decisionStyle: string;
+  avatar?: Avatar;
+  domains?: string[];
 }
 
 // Situation-brief output (spec 04 §brief.ts).
@@ -85,3 +73,13 @@ export const SituationBriefSchema = z.object({
   initialRead: z.string().min(1).max(140),
 });
 export type SituationBrief = z.infer<typeof SituationBriefSchema>;
+
+// Shared structured output for statement/rebuttal/closing — mirrors the
+// statement_done/rebuttal_done/closing_done event payloads (spec 02): the full
+// in-voice prose, the structured Stance, and spec 04's "bubble rule" — a
+// first-person ≤140-char summary for the UI's thinking bubble.
+export const MemberPhaseOutputSchema = StanceSchema.extend({
+  fullText: z.string().min(1),
+  bubble: z.string().min(1).max(140),
+});
+export type MemberPhaseOutput = z.infer<typeof MemberPhaseOutputSchema>;

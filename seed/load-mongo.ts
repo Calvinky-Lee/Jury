@@ -6,7 +6,7 @@ import { readFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import 'dotenv/config'
-import { closeDb, getDb } from '../apps/council-service/src/db/mongo'
+import { closeDb, getDb } from '../apps/council-service/src/db/client'
 
 const IN = join(dirname(fileURLToPath(import.meta.url)), 'personas-embedded.json')
 
@@ -23,7 +23,8 @@ async function main() {
     embedding: number[]
   }[]
 
-  const col = getDb().collection('personas')
+  const db = await getDb()
+  const col = db.collection('personas')
   await col.deleteMany({})
   await col.insertMany(
     personas.map((p) => ({

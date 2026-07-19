@@ -1,0 +1,22 @@
+[
+  { "id": "b01", "dilemma": "Should our startup switch to annual billing?", "decisionType": "business" },
+  { "id": "b02", "dilemma": "Should we outsource customer support to a third-party vendor?", "decisionType": "business" },
+  { "id": "b03", "dilemma": "Should we lay off 15% of the team to extend our runway?", "context": "We have 9 months of runway left and no signed term sheet.", "decisionType": "business" },
+  { "id": "b04", "dilemma": "Should we pivot our product from B2C to B2B?", "decisionType": "business" },
+  { "id": "b05", "dilemma": "Should we raise a Series A now or bootstrap for another year?", "decisionType": "business" },
+  { "id": "b06", "dilemma": "Should we open-source our core library?", "decisionType": "business" },
+  { "id": "b07", "dilemma": "Should we sign an exclusive distribution deal with a single retailer?", "decisionType": "business" },
+  { "id": "b08", "dilemma": "Should we sunset our legacy product line to focus engineering on the new one?", "decisionType": "business" },
+  { "id": "c01", "dilemma": "Should I leave my stable corporate job to join an early-stage startup?", "decisionType": "career" },
+  { "id": "c02", "dilemma": "Should I accept a promotion that requires relocating to another city?", "decisionType": "career" },
+  { "id": "c03", "dilemma": "Should I go back to school for a graduate degree while working full-time?", "decisionType": "career" },
+  { "id": "c04", "dilemma": "Should I ask for a raise or start interviewing elsewhere?", "decisionType": "career" },
+  { "id": "c05", "dilemma": "Should I take a lower-paying job that better matches my long-term goals?", "decisionType": "career" },
+  { "id": "m01", "dilemma": "Should we buy a house now or keep renting for another two years?", "decisionType": "money" },
+  { "id": "m02", "dilemma": "Should I pay off my student loans early or invest the extra cash?", "decisionType": "money" },
+  { "id": "m03", "dilemma": "Should we finance a new car or keep repairing our old one?", "decisionType": "money" },
+  { "id": "p01", "dilemma": "Should I move across the country to be closer to family?", "decisionType": "personal" },
+  { "id": "p02", "dilemma": "Should I end a long-term relationship that has become comfortable but unfulfilling?", "decisionType": "personal" },
+  { "id": "p03", "dilemma": "Should I take a year off to travel before settling into a career?", "decisionType": "personal" },
+  { "id": "a01", "dilemma": "Should I name my new pet chinchilla after my ex?", "decisionType": "absurd" }
+]

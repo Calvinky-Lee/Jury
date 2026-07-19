@@ -12,7 +12,11 @@ export const OpsMetricsSchema = z.object({
 });
 export type OpsMetrics = z.infer<typeof OpsMetricsSchema>;
 
-function envelope<T extends z.ZodTypeAny>(type: string, payload: T) {
+// `Type extends string` (rather than a bare `type: string` parameter) so each call
+// site infers its own literal instead of widening to `string` — otherwise every
+// event variant ends up typed with `type: string` and `ContractEvent` stops being a
+// real discriminated union (switch/case narrowing on `.type` silently breaks).
+function envelope<Type extends string, T extends z.ZodTypeAny>(type: Type, payload: T) {
   return z.object({
     seq: z.number().int(),
     sessionId: z.string(),
