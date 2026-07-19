@@ -6,6 +6,7 @@ import {
   type Verdict,
   type Phase,
   type SessionStatus,
+  type Avatar,
 } from '@council/contract';
 
 // Stance/Verdict/Phase/SessionStatus now come from @council/contract (P4's hour-0
@@ -49,11 +50,18 @@ export type IntakeResult = z.infer<typeof IntakeResultSchema>;
 // (CastMemberLite) plus the stance-profile fields spec 05 owns for real
 // (P2's persona/casting system). This is a local stand-in, same caveat as
 // CastMemberLite above.
+//
+// `avatar`/`domains` are optional here (existing Fakes/tests don't set them)
+// but the orchestrator spreads this shape straight into the `persona_cast`
+// wire event, whose `CastMember` (spec 02, packages/contract/src/persona.ts)
+// requires both — the real CastingProvider adapter always populates them.
 export interface PersonaForBrief extends CastMemberLite {
   voice: string;
   coreValues: string[];
   biases: string[];
   decisionStyle: string;
+  avatar?: Avatar;
+  domains?: string[];
 }
 
 // Situation-brief output (spec 04 §brief.ts).
@@ -65,3 +73,13 @@ export const SituationBriefSchema = z.object({
   initialRead: z.string().min(1).max(140),
 });
 export type SituationBrief = z.infer<typeof SituationBriefSchema>;
+
+// Shared structured output for statement/rebuttal/closing — mirrors the
+// statement_done/rebuttal_done/closing_done event payloads (spec 02): the full
+// in-voice prose, the structured Stance, and spec 04's "bubble rule" — a
+// first-person ≤140-char summary for the UI's thinking bubble.
+export const MemberPhaseOutputSchema = StanceSchema.extend({
+  fullText: z.string().min(1),
+  bubble: z.string().min(1).max(140),
+});
+export type MemberPhaseOutput = z.infer<typeof MemberPhaseOutputSchema>;

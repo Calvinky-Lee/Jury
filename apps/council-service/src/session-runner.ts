@@ -2,8 +2,9 @@ import { randomUUID } from "node:crypto";
 import { sessions } from "./db/collections.js";
 import { createEmitter } from "./events/emitter.js";
 import { runDeliberation } from "./chair/index.js";
+import { buildLiveDeliberationClients } from "./live-deps.js";
 import { replayFixtureThroughEmitter } from "./demo/replay-fixture.js";
-import { assertLiveModeConfigured } from "./config/env.js";
+import { assertLiveModeConfigured, env } from "./config/env.js";
 
 /** 3 concurrent sessions max; excess returns 429 (spec 09 §6 concurrency cap). */
 export const MAX_CONCURRENT_SESSIONS = 3;
@@ -35,7 +36,17 @@ export async function startSession(
   const emit = await createEmitter(id);
   const run = demo
     ? replayFixtureThroughEmitter(emit)
-    : runDeliberation(id, dilemma, context, emit);
+    : (() => {
+        const { modelClient, verdictModelClient, castingProvider, toolExecutor, emitter } =
+          buildLiveDeliberationClients(env.geminiApiKey!, emit, env.costCapUsd);
+        return runDeliberation(id, dilemma, context, {
+          modelClient,
+          verdictModelClient,
+          castingProvider,
+          toolExecutor,
+          emitter,
+        });
+      })();
 
   run
     .catch(async (err) => {
