@@ -62,18 +62,31 @@ export function SeatRing({
           ? members[memberView.phases.rebuttal.quotedPersonaId]?.member.name
           : undefined;
 
+        // Anchor the BLOB (64px) exactly on the ring point and let the rest of the
+        // column flow OUTWARD from center — down for lower seats, up for upper ones.
+        // Previously the whole column was centred on the ring point, so the tall
+        // think-bubble shoved the blob inward toward the Chair; the bottom seat's
+        // blob ended up overlapping the Chair's face. Blob half-height is 32px, so
+        // translating by -32px (bubble below) or -100%+32px (bubble above) keeps the
+        // blob centred on the ring in either direction.
+        const bubbleBelow = pos.y >= 45;
+
         return (
           <div
             key={pos.seat}
-            className="absolute flex -translate-x-1/2 -translate-y-1/2 flex-col items-center gap-2"
-            style={{ left: `${pos.x}%`, top: `${pos.y}%` }}
+            className="absolute"
+            style={{
+              left: `${pos.x}%`,
+              top: `${pos.y}%`,
+              transform: bubbleBelow ? "translate(-50%, -32px)" : "translate(-50%, calc(-100% + 32px))",
+            }}
           >
             {memberView ? (
               <motion.div
                 initial={{ scale: 0, opacity: 0 }}
                 animate={{ scale: 1, opacity: memberView.recused ? 0.4 : 1 }}
                 transition={{ type: "spring", bounce: 0.45, duration: 0.6 }}
-                className="relative flex flex-col items-center gap-2"
+                className={`relative flex ${bubbleBelow ? "flex-col" : "flex-col-reverse"} items-center gap-2`}
               >
                 {memberView.stanceChanged && <StanceChangeBanner />}
 
