@@ -5,7 +5,7 @@
  * -> baselines) is unchanged. P2's generate-personas.ts remains the real source;
  * this is non-sacred seed data (spec 05), safe to regenerate/overwrite.
  *
- * Run: pnpm --filter @jury/seed exec tsx personas.handauthored.ts  (or tsx directly)
+ * Run: tsx seed/personas.handauthored.ts  (from the repo root)
  */
 import { randomUUID } from 'node:crypto';
 import { writeFileSync } from 'node:fs';
