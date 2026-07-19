@@ -47,3 +47,8 @@ export interface MemberTranscript {
   rebuttal: string;
   closing: string;
 }
+
+// Mirrors specs/02-contract.md §phases.ts.
+export const PHASES = ['intake', 'casting', 'statements', 'rebuttal', 'closing', 'verdict'] as const;
+export type Phase = (typeof PHASES)[number];
+export type SessionStatus = 'created' | Phase | 'done' | 'failed';
