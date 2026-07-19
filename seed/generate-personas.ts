@@ -19,8 +19,8 @@ const TARGET = 200
 const BATCH = 10
 // gemini-2.5-flash now 404s for new API keys ("no longer available to new
 // users"); gemini-3-flash-preview verified working + reliable at JSON output on
-// 2026-07-19 (same tier constant the council uses — see
-// apps/council-service/src/chair/model-config.ts §MEMBER_MODEL).
+// 2026-07-19 (same tier constant the sidebar uses — see
+// apps/sidebar-service/src/chair/model-config.ts §MEMBER_MODEL).
 const MODEL = 'gemini-3-flash-preview'
 
 /**
