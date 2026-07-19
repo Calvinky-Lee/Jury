@@ -47,4 +47,4 @@ One local `.env` at the repo root, loaded by both apps. Gitignored from commit 1
 
 ## Budget sanity (per session)
 
-On the AI Studio **free tier: $0** — the constraint is requests/minute, not dollars (4 members × 3 phases + Chair calls ≈ 15–20 requests/session; fits free-tier RPM with the orchestrator's backoff). On a paid key: Flash-tier tokens + one Pro-tier verdict ≈ **well under $0.10/session**; grounded search is included with the API (quota applies). Voyage query embedding <$0.001. The $0.50 cap is now deep margin rather than a real ceiling — keep it as the kill-switch anyway.
+On the AI Studio **free tier: $0** — the constraint is requests/minute, not dollars (3–6 members × 3 phases + Chair calls ≈ 12–25 requests/session; fits free-tier RPM with the orchestrator's backoff). On a paid key: Flash-tier tokens + one Pro-tier verdict ≈ **well under $0.10/session**; grounded search is included with the API (quota applies). Voyage query embedding <$0.001. The $0.50 cap is now deep margin rather than a real ceiling — keep it as the kill-switch anyway.

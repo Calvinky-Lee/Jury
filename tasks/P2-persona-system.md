@@ -17,11 +17,11 @@
 3. **Library generation script (spec + prompts).** ~200 general-purpose personas spanning decision domains (business, career, money, personal, ethics). Includes a quality rubric: distinct decision style, at least one explicit bias, a voice that survives one sentence of reading. Generation is offline/one-time; output is seed data, reviewed before loading.
 4. **Embedding pipeline.** Canonical stance-profile text → Voyage `voyage-3` (MongoDB-owned; swappable with a one-line rationale added to the spec). Store in `personas.embedding` via `seed/load-mongo.ts`.
 5. **Atlas Vector Search setup.** Collection per spec 03, vector search index (cosine, 1024 dims), `$vectorSearch` top-K query (K=25, `numCandidates: 100`).
-6. **MMR casting.** `score = λ·sim(dilemma, persona) − (1−λ)·max sim(persona, selected)`, λ≈0.6, select 4. **Deterministic unit tests with fixed embeddings** — casting must be testable without any model call.
-7. **Diversity score.** Mean pairwise distance of the cast, normalized against a random-cast baseline (precompute the baseline over the library). Target ≥1.3× baseline. This is the number the UI shows during casting theater.
-8. **2D projection (`project.ts`).** Per-session PCA over the top-25 retrieval pool; project the 4 cast embeddings, normalize to [-1,1]² → `vector_map` in `casting_done` (spec 05 §project.ts). Feeds P3's vector-graph sidebar. Deterministic; unit-tested with synthetic embeddings.
+6. **MMR casting.** `score = λ·sim(dilemma, persona) − (1−λ)·max sim(persona, selected)`, λ≈0.6, select N (size passed in from the Chair's intake, 3–6). **Deterministic unit tests with fixed embeddings** — casting must be testable without any model call.
+7. **Diversity score.** Mean pairwise distance of the cast, normalized against per-size random-cast baselines `DIVERSITY_BASELINE[n]`, n ∈ 3–6 (precomputed over the library). Target ≥1.3× baseline. This is the number the UI shows during casting theater.
+8. **2D projection (`project.ts`).** Per-session PCA over the top-25 retrieval pool; project the N cast embeddings, normalize to [-1,1]² → `vector_map` in `casting_done` (spec 05 §project.ts). Feeds P3's vector-graph sidebar. Deterministic; unit-tested with synthetic embeddings.
 9. **Casting API surface.** Function or thin endpoint per the Provide contract above; wire into P1's pipeline at the hour-12 checkpoint.
-10. **Stretch — output-diversity gate.** Embed the four opening statements; flag pairs above a similarity threshold. Only start this after the hour-12 checkpoint passes and P1's KPIs are being measured.
+10. **Stretch — output-diversity gate.** Embed the opening statements; flag pairs above a similarity threshold. Only start this after the hour-12 checkpoint passes and P1's KPIs are being measured.
 
 ## Checkpoints
 

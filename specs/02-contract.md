@@ -78,9 +78,9 @@ Event<T> { seq: number, sessionId: string, ts: string, type: string, payload: T 
 | type | payload | notes |
 |---|---|---|
 | `session_started` | `{ dilemma, context? }` | |
-| `dilemma_parsed` | `{ summary, axesOfTension: string[] }` | from intake |
-| `casting_started` | `{ poolSize }` | |
-| `persona_cast` | `{ member: CastMember, seat: 0-3, runningDiversityScore, initialRead: string }` | ×4; `initialRead` = ≤140-char first take on the problem (distilled from the situation brief) → the member's first thinking bubble |
+| `dilemma_parsed` | `{ summary, axesOfTension: string[], councilSize: number }` | from intake; N clamped 3–6, default 4 |
+| `casting_started` | `{ poolSize, councilSize }` | |
+| `persona_cast` | `{ member: CastMember, seat: number, runningDiversityScore, initialRead: string }` | ×N (councilSize), seat 0..N-1; `initialRead` = ≤140-char first take on the problem (distilled from the situation brief) → the member's first thinking bubble |
 | `casting_done` | `{ diversityScore, baselineRatio, vectorMap: VectorPoint[] }` | ratio is the ≥1.3× KPI number; vectorMap feeds the sidebar graph |
 | `statement_started` | `{ personaId, phase: 'opening' }` | |
 | `statement_delta` | `{ personaId, text }` | token/chunk streaming |
@@ -107,13 +107,13 @@ OpsMetrics { firstCastMs, firstTokenMs, verdictMs, totalCostUsd, recusals: numbe
 VectorPoint {              // 2D projection of a member's stance-profile embedding (spec 05 §Projection)
   personaId: string
   x: number, y: number     // PCA coords normalized to [-1, 1]
-  seat: 0|1|2|3            // color assignment is by seat (spec 07)
+  seat: number             // 0..N-1; color assignment is by seat (spec 07)
 }
 ```
 
 ## REST endpoints (also contract-typed)
 
-- `GET /sessions?q=<text>&limit=25` → `{ sessions: [{ id, dilemma, createdAt, status, orb: { hues: string[4], voteSplit } }] }` — powers the memory-orb field and the past-conversation search bar (text search on dilemma, spec 03).
+- `GET /sessions?q=<text>&limit=25` → `{ sessions: [{ id, dilemma, createdAt, status, orb: { hues: string[], voteSplit } }] }` — powers the memory-orb field and the past-conversation search bar (text search on dilemma, spec 03).
 - `GET /sessions/:id` (metadata) and `GET /sessions/:id/events` (replay log) — spec 03 §Access policy.
 
 ## Guarantees

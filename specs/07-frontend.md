@@ -15,7 +15,7 @@ Inside-Out-*inspired* mind-headquarters vibe; the art is NOT Pixar's. Council me
 
 ## Scene layout — the HQ
 
-**Radial layout: the Chair (the verdict-making judge agent) sits at the center; the four members surround it.** Every member's thinking is visible at every phase via fixed-size thinking bubbles anchored outward from each seat.
+**Radial layout: the Chair (the verdict-making judge agent) sits at the center; the members — 3–6, sized to the case — surround it, seats spaced evenly at 360°/N.** Every member's thinking is visible at every phase via fixed-size thinking bubbles anchored outward from each seat.
 
 ```
 ┌──────────────────────────────────────────────────┬───┐
@@ -25,7 +25,7 @@ Inside-Out-*inspired* mind-headquarters vibe; the art is NOT Pixar's. Council me
 │ ①understanding ②convening ③opinions               │ e │  ← PhaseTracker
 │ ④deliberating ⑤pitches ⑥decision                  │ c │
 ├──────────────────────────────────────────────────┤ t │
-│  ┌💭────────┐                     ┌💭────────┐    │ o │  four fixed-size thinking
+│  ┌💭────────┐                     ┌💭────────┐    │ o │  fixed-size thinking
 │  │ bubble 0 │   (●)       (▲)   │ bubble 1 │    │ r │  bubbles, anchored outward
 │  └──────────┘     ╲        ╱     └──────────┘    │ s │  from the corner seats
 │                    ◎ CHAIR                        │   │  ← judge agent, CENTER
@@ -40,7 +40,7 @@ Inside-Out-*inspired* mind-headquarters vibe; the art is NOT Pixar's. Council me
 Demo target: **projector at 1080p** — big type, high contrast, readable from the back of a room.
 
 ### ThinkBubble (`components/hq/ThinkBubble`) — the core of the debate visibility
-One per member, always in the same position, **fixed dimensions** (~30ch × 4 lines) so four bubbles + Chair always fit on screen with zero overlap or reflow — the *content* adapts to the box, never the reverse:
+One per member, always in the same position, **fixed dimensions** (~30ch × 4 lines) so all bubbles + Chair always fit on screen with zero overlap or reflow (the box steps down one size notch when N ≥ 5) — the *content* adapts to the box, never the reverse:
 - **Phase prefix:** every bubble is prefixed with a small phase tag in the member's hue — `💭 first read` → `🗣 opinion` → `🔄 reading the others` → `🎯 pitch to the Chair` — so the audience always knows which step of thinking they're watching.
 - **Summarized content per phase** (all model-written to fit, ≤140 chars, from the contract):
   - `persona_cast.initialRead` — the member's understanding of the problem the moment it's convened;
@@ -53,10 +53,10 @@ One per member, always in the same position, **fixed dimensions** (~30ch × 4 li
 
 ### Character system (pure SVG/CSS — no image assets)
 - Fixed set: **12 hues × ~4 forms** (`round`, `tall`, `squat`, `spiky`). A blob = body path + eyes + tiny idle bob. States: `idle`, `talking` (mouth + color pulse), `dissent` (desaturated + furrowed brow). Original by construction; zero art pipeline.
-- A member's `avatar.hue` is its identity color EVERYWHERE: body, nameplate accent, thinking-bubble border and phase tag, vector in the sidebar, and its share of the memory orb. The Chair is a fixed larger neutral-toned character at the center — visually the hub the four members (and their closing pitches) point into.
+- A member's `avatar.hue` is its identity color EVERYWHERE: body, nameplate accent, thinking-bubble border and phase tag, vector in the sidebar, and its share of the memory orb. The Chair is a fixed larger neutral-toned character at the center — visually the hub the members (and their closing pitches) point into.
 
 ### Memory orbs (`components/hq/OrbField`)
-- Home screen (and the strip above a live session): every finished session is a **glowing orb** slowly orbiting. Orb coloring = a swirl of the four members' hues from that case; subtle size by recency.
+- Home screen (and the strip above a live session): every finished session is a **glowing orb** slowly orbiting. Orb coloring = a swirl of the members' hues from that case; subtle size by recency.
 - **Hover an orb:** tooltip with the dilemma one-liner + vote split. **Click:** navigate to `/replay/[id]`.
 - Data from `GET /sessions` (contract §REST). Empty state: "no memories yet — file your first case."
 - **The crystallization beat:** on `session_done`, the current case condenses into a new orb that floats up and joins the field. This is the theme's signature moment — do it well.

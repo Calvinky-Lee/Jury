@@ -22,12 +22,12 @@ MongoDB Atlas (free M0 tier) with **Atlas Vector Search** for the persona librar
 }
 
 // sessions
-{ _id: uuid, dilemma: string, context?: string,
+{ _id: uuid, dilemma: string, context?: string, councilSize: int,
   status: string,               // SessionStatus enum (contract)
   createdAt: Date }
 
 // castings — one doc per seat
-{ sessionId: uuid, personaId: ObjectId, seat: 0|1|2|3,
+{ sessionId: uuid, personaId: ObjectId, seat: int,   // 0..councilSize-1
   situationBrief: string, mmrScore: number,
   diversityScore?: number, vectorPoint?: { x: number, y: number } }
 

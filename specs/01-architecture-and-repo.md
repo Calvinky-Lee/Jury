@@ -8,7 +8,7 @@
 flowchart LR
     U[Browser] -->|localhost:3000| W[apps/web · Next.js · local]
     W -->|proxy| CS[apps/council-service · Hono · localhost:8787]
-    CS -->|Gemini API| A[Gemini — Chair + 4 members + search grounding]
+    CS -->|Gemini API| A[Gemini — Chair + N members + search grounding]
     CS -->|Voyage API| V[voyage-3 embeddings]
     CS -->|MONGODB_URI| M[(MongoDB Atlas + Vector Search)]
 ```

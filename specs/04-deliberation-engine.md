@@ -16,7 +16,7 @@ created → intake → casting → statements → rebuttal → closing → verdi
 | Role | Model | Rationale |
 |---|---|---|
 | Intake, situation briefs | Gemini Flash tier | structured extraction (`responseSchema` JSON mode), cheap/free |
-| Members (statements + rebuttals + closings) | Gemini Flash tier | 4× parallel × 3 phases — speed dominates; closings are tiny; Google Search grounding available (spec 06) |
+| Members (statements + rebuttals + closings) | Gemini Flash tier | N× parallel × 3 phases — speed dominates; closings are tiny; Google Search grounding available (spec 06) |
 | Verdict | Gemini Pro tier | the highest-skill prompt; one call per session justifies the tier |
 
 Exact model IDs (`gemini-3-flash` / `gemini-3-pro`, falling back to `gemini-2.5-flash` / `gemini-2.5-pro` if 3.x isn't available on the team's AI Studio tier) are **verified at hour 0** and pinned as per-role constants in one config file. AI Studio free-tier rate limits (RPM/TPM) are the real constraint, not dollars — the orchestrator serializes phases if 429s appear. The $0.50/session cap (spec 09) stays as the kill-switch if a paid key is used.
@@ -25,7 +25,7 @@ Exact model IDs (`gemini-3-flash` / `gemini-3-pro`, falling back to `gemini-2.5-
 
 ### 1. `intake.ts`
 - **Input:** raw dilemma + optional context.
-- **Output (structured):** `{ summary, axesOfTension: string[2-4], decisionType }`.
+- **Output (structured):** `{ summary, axesOfTension: string[2-6], decisionType, councilSize }`. Council size = one member per axis of tension plus one generalist, clamped 3–6 (default 4) — the council is as big as the case demands, no bigger.
 - Axes must be *tensions* ("job security vs. growth ceiling"), never generic ("pros vs cons"). Acceptance: ≥18/20 benchmark dilemmas produce non-trivial axes.
 
 ### 2. `brief.ts` — situation brief
@@ -41,7 +41,7 @@ Exact model IDs (`gemini-3-flash` / `gemini-3-pro`, falling back to `gemini-2.5-
 - Length budget: 120–200 words of prose. Personality lives in word choice, not length.
 
 ### 4. `rebuttal.ts` — one round (per member, parallel)
-- **Context packing:** the member's own statement + the other three members' `{name, archetype, stance, fullText}`. No tool access in rebuttals (keeps the round fast; facts were for openings).
+- **Context packing:** the member's own statement + the other members' `{name, archetype, stance, fullText}`. No tool access in rebuttals (keeps the round fast; facts were for openings).
 - **Instruction:** address the strongest opposing argument by name and quote; you MAY update your stance — do so only if genuinely moved (sycophancy warning in-prompt).
 - **Output:** streamed rebuttal + final `Stance` (same or updated → `stance_updated` event when `recommendation` changes).
 
@@ -51,7 +51,7 @@ Exact model IDs (`gemini-3-flash` / `gemini-3-pro`, falling back to `gemini-2.5-
 - No tools; tiny fast calls (~2–3s). This is the "pitch your solution to the orchestrator" beat the UI renders as members turning to the Chair.
 
 ### 6. `verdict.ts` — **built first, against hand-authored fake stances**
-- **Input:** parsed dilemma + all four locked final stances + statement/rebuttal/closing texts.
+- **Input:** parsed dilemma + all locked final stances + statement/rebuttal/closing texts.
 - **Output:** `Verdict` (contract) + `briefMd` (the exportable decision brief: dilemma, council, vote, ruling, solution plan, dissent, conditions — ~1 page of Markdown).
 - **The verdict is two distinct products, and the prompt treats them separately:**
   1. `ruling` — the Chair's direct, personal answer to the user's question (1–3 sentences, no hedging).
@@ -61,7 +61,7 @@ Exact model IDs (`gemini-3-flash` / `gemini-3-pro`, falling back to `gemini-2.5-
 
 ## Orchestration (`chair/orchestrator.ts`)
 
-- Statements, rebuttals, and closings: `Promise.allSettled` over 4 member runs; statements/rebuttals wrapped in a 45s `AbortController` timeout (closings: 15s); rejection/timeout → `agent_recused`.
+- Statements, rebuttals, and closings: `Promise.allSettled` over the N member runs; statements/rebuttals wrapped in a 45s `AbortController` timeout (closings: 15s); rejection/timeout → `agent_recused`.
 - Streaming: each member run receives an `emit(event)` callback; the emitter serializes (assigns `seq`, persists, fans out to SSE). Interleaved deltas from parallel members are expected and correct — the UI demuxes by `personaId`.
 - The orchestrator consumes P2's casting API (spec 05 §API) and P4's tool implementations (spec 06); it imports neither module's internals.
 

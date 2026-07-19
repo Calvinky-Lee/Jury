@@ -1,6 +1,6 @@
 # The Council 🧠⚖️
 
-**Better decisions through engineered disagreement.** File your case, and the Chair convenes four AI council members — tool-using agents cast for maximal relevant disagreement, each an original colored blob character — who research, argue, rebut, pitch the Chair, and deliver a decision that preserves the dissent: a direct answer, a devised solution plan, and the conditions that would change it. Every finished case becomes a **memory orb** orbiting the HQ, searchable from the top bar.
+**Better decisions through engineered disagreement.** File your case, and the Chair convenes a council sized to the case — 3–6 AI members — tool-using agents cast for maximal relevant disagreement, each an original colored blob character — who research, argue, rebut, pitch the Chair, and deliver a decision that preserves the dissent: a direct answer, a devised solution plan, and the conditions that would change it. Every finished case becomes a **memory orb** orbiting the HQ, searchable from the top bar.
 
 Built for the **Phoebe prize track** — AI to Coordinate the Real World.
 
