@@ -55,7 +55,7 @@ export async function startSession(
   const run = demo
     ? replayFixtureThroughEmitter(emit, { speed: env.demoSpeed })
     : (() => {
-        const { modelClient, verdictModelClient, castingProvider, toolExecutor, emitter } =
+        const { modelClient, verdictModelClient, castingProvider, toolExecutor, emitter, costTracker } =
           buildLiveDeliberationClients(env.geminiApiKey!, emit, env.costCapUsd);
         return runDeliberation(id, dilemma, context, {
           modelClient,
@@ -63,6 +63,7 @@ export async function startSession(
           castingProvider,
           toolExecutor,
           emitter,
+          costTracker,
         });
       })();
 

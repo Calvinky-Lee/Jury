@@ -1,4 +1,6 @@
 import { describe, it, expect } from 'vitest';
+import { randomUUID } from 'node:crypto';
+import { PersonaCastPayloadSchema } from '@council/contract';
 import { runDeliberation, type DeliberationDeps } from './orchestrator.js';
 import { FakeModelClient, fakeClientWithResponse, type ModelClient } from './model-client.js';
 import { FakeCastingProvider, FakeToolExecutor, InMemoryEmitter } from './ports.js';
@@ -8,10 +10,10 @@ import { splitIdealVerdict } from './prompts/__fixtures__/verdict-fixtures.js';
 const DILEMMA = 'Should our startup switch to annual billing?';
 
 const personas: PersonaForBrief[] = [
-  { id: 'actuary', name: 'The Actuary', archetype: 'Risk quantifier', voice: 'measured', coreValues: ['risk quantification'], biases: ['overweights downside'], decisionStyle: 'cautious' },
-  { id: 'gambler', name: 'The Gambler', archetype: 'Bold upside-seeker', voice: 'punchy', coreValues: ['seizing windows'], biases: ['discounts downside'], decisionStyle: 'fast' },
-  { id: 'traditionalist', name: 'The Traditionalist', archetype: 'Status-quo guardian', voice: 'protective', coreValues: ['customer trust'], biases: ['overweights past disruption'], decisionStyle: 'precedent-driven' },
-  { id: 'pragmatist', name: 'The Pragmatist', archetype: 'Practical middle path', voice: 'even-keeled', coreValues: ['optionality'], biases: ['avoids extremes'], decisionStyle: 'balanced' },
+  { id: 'actuary', name: 'The Actuary', archetype: 'Risk quantifier', voice: 'measured', coreValues: ['risk quantification'], biases: ['overweights downside'], decisionStyle: 'cautious', avatar: { hue: 'slate', form: 'squat' }, domains: ['business'] },
+  { id: 'gambler', name: 'The Gambler', archetype: 'Bold upside-seeker', voice: 'punchy', coreValues: ['seizing windows'], biases: ['discounts downside'], decisionStyle: 'fast', avatar: { hue: 'crimson', form: 'spiky' }, domains: ['business'] },
+  { id: 'traditionalist', name: 'The Traditionalist', archetype: 'Status-quo guardian', voice: 'protective', coreValues: ['customer trust'], biases: ['overweights past disruption'], decisionStyle: 'precedent-driven', avatar: { hue: 'moss', form: 'round' }, domains: ['business'] },
+  { id: 'pragmatist', name: 'The Pragmatist', archetype: 'Practical middle path', voice: 'even-keeled', coreValues: ['optionality'], biases: ['avoids extremes'], decisionStyle: 'balanced', avatar: { hue: 'sky', form: 'tall' }, domains: ['business'] },
 ];
 
 const idealIntake = {
@@ -96,6 +98,26 @@ describe('orchestrator — happy path, all 4 members', () => {
 
     // every event carries the sessionId (contract envelope)
     expect(emitter.events.every((e) => e.sessionId === 'session-a')).toBe(true);
+  });
+
+  it('emits persona_cast payloads that satisfy the real @council/contract schema', async () => {
+    // Regression test: the wire shape (nested stanceProfile, seat on the member
+    // itself) previously drifted from PersonaForBrief's flat fields and would
+    // have thrown in the real, schema-validating emitter on every live session —
+    // InMemoryEmitter alone doesn't catch that, so assert against the real schema here.
+    // Uses its own UUID-keyed personas (PersonaIdentitySchema.id requires a uuid,
+    // unlike the readable slug ids the other tests key their assertions off of).
+    const uuidPersonas: PersonaForBrief[] = personas.map((p) => ({ ...p, id: randomUUID() }));
+    const emitter = new InMemoryEmitter();
+    const deps = baseDeps({ emitter, castingProvider: new FakeCastingProvider(uuidPersonas, 0.8, 1.4) });
+
+    await runDeliberation('session-schema', DILEMMA, undefined, deps);
+
+    const personaCastEvents = emitter.events.filter((e) => e.type === 'persona_cast');
+    expect(personaCastEvents.length).toBe(4);
+    for (const event of personaCastEvents) {
+      expect(() => PersonaCastPayloadSchema.parse(event.payload)).not.toThrow();
+    }
   });
 });
 

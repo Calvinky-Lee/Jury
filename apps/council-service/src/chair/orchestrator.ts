@@ -28,6 +28,9 @@ export interface DeliberationDeps {
   castingProvider: CastingProvider;
   toolExecutor: ToolExecutor; // seam only — not invoked yet, see statement.ts
   emitter: Emitter;
+  // Optional: real sessions pass live-deps.ts's CostTracker so session_done
+  // reports the actual running total instead of a hardcoded 0; fakes/tests omit it.
+  costTracker?: { total: number };
   timeouts?: {
     statementMs?: number;
     rebuttalMs?: number;
@@ -159,9 +162,10 @@ export async function runDeliberation(
 
   // --- Casting ---------------------------------------------------------------
   await emit('casting_started', { poolSize: 25, councilSize: intake.councilSize });
-  // Embeds the PARSED dilemma (intake.summary), not raw user text — the axes
-  // are what members must be relevant to (spec 05 §retrieve.ts).
-  const casting = await deps.castingProvider.castCouncil(intake.summary, intake.councilSize);
+  // Embeds the PARSED dilemma: summary + axes of tension, not raw user text —
+  // the axes are what members must be relevant to (spec 05 §retrieve.ts).
+  const castingQuery = [intake.summary, ...intake.axesOfTension].join('. ');
+  const casting = await deps.castingProvider.castCouncil(castingQuery, intake.councilSize);
   const totalMembers = casting.members.length;
 
   const briefs = new Map<string, SituationBrief>();
@@ -169,8 +173,26 @@ export async function runDeliberation(
   for (const member of casting.members) {
     const brief = await runBrief(deps.modelClient, member, intake);
     briefs.set(member.id, brief);
+    // Wire shape must match the real CastMemberSchema (packages/contract/src/persona.ts):
+    // a nested stanceProfile object and `seat` on the member itself, not PersonaForBrief's
+    // flat fields — the real emitter schema-validates this and will throw otherwise.
     await emit('persona_cast', {
-      member: { ...member, situationBrief: brief.brief, mmrScore: member.mmrScore ?? 0 },
+      member: {
+        id: member.id,
+        name: member.name,
+        archetype: member.archetype,
+        avatar: member.avatar,
+        voice: member.voice,
+        domains: member.domains ?? [],
+        stanceProfile: {
+          coreValues: member.coreValues,
+          biases: member.biases,
+          decisionStyle: member.decisionStyle,
+        },
+        seat,
+        mmrScore: member.mmrScore ?? 0,
+        situationBrief: brief.brief,
+      },
       seat,
       runningDiversityScore: casting.diversityScore,
       initialRead: brief.initialRead,
@@ -293,7 +315,7 @@ export async function runDeliberation(
       firstCastMs: firstCastMs ?? 0,
       firstTokenMs: firstTokenMs ?? 0,
       verdictMs,
-      totalCostUsd: 0,
+      totalCostUsd: deps.costTracker?.total ?? 0,
       recusals: recusedCount,
     },
   });

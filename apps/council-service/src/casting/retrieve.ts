@@ -51,14 +51,26 @@ export async function retrievePool(
     ])
     .toArray()
 
-  return docs.map((d) => ({
-    id: String(d._id),
-    name: d.name,
-    archetype: d.archetype,
-    avatar: d.avatar,
-    voice: d.profile?.voice ?? '',
-    domains: d.profile?.domains ?? [],
-    stanceProfile: d.stanceProfile,
-    embedding: d.embedding,
-  }))
+  return docs.map((d) => {
+    const voice = d.profile?.voice
+    const domains = d.profile?.domains
+    // voice/domains are required, non-empty fields on PersonaIdentitySchema
+    // (packages/contract/src/persona.ts) — a doc missing them is malformed
+    // seed data, not a case to silently paper over with empty defaults.
+    if (!voice || !domains || domains.length === 0) {
+      throw new Error(
+        `persona ${d._id} is missing required profile fields (voice/domains) — seed data is malformed`,
+      )
+    }
+    return {
+      id: String(d._id),
+      name: d.name,
+      archetype: d.archetype,
+      avatar: d.avatar,
+      voice,
+      domains,
+      stanceProfile: d.stanceProfile,
+      embedding: d.embedding,
+    }
+  })
 }

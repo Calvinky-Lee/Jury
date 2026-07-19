@@ -1,6 +1,12 @@
+"use client";
+
+import { useState } from "react";
+import type { SessionSummary } from "@council/contract";
 import { IntakeForm } from "@/components/intake/IntakeForm";
 import { Blob } from "@/components/hq/Blob";
 import { BackgroundDoodles } from "@/components/BackgroundDoodles";
+import { OrbField } from "@/components/hq/OrbField";
+import { SearchBar } from "@/components/hq/SearchBar";
 
 const PREVIEW_AVATARS = [
   { hue: "sky", form: "round" },
@@ -10,6 +16,8 @@ const PREVIEW_AVATARS = [
 ] as const;
 
 export default function Home() {
+  const [searchResults, setSearchResults] = useState<SessionSummary[] | null>(null);
+
   return (
     <>
       <BackgroundDoodles />
@@ -30,6 +38,9 @@ export default function Home() {
         </div>
 
         <IntakeForm />
+
+        <SearchBar onResults={setSearchResults} />
+        <OrbField searchResults={searchResults} />
       </main>
     </>
   );
