@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { useRouter } from "next/navigation";
 import type { Verdict } from "@sidebar/contract";
 import { VoteSplitBar } from "@/components/hq/VoteSplitBar";
 import type { MemberView } from "@/lib/session-store";
@@ -12,6 +13,7 @@ interface DecisionTheaterProps {
 }
 
 export function DecisionTheater({ verdict, briefMd, members }: DecisionTheaterProps) {
+  const router = useRouter();
   const dissentMember = verdict.dissent
     ? (members[verdict.dissent.who] ??
       Object.values(members).find((m) => m.member.name === verdict.dissent!.who))
@@ -67,13 +69,22 @@ export function DecisionTheater({ verdict, briefMd, members }: DecisionTheaterPr
         ))}
       </ul>
 
-      <button
-        type="button"
-        onClick={downloadBrief}
-        className="mt-5 rounded-full border-2 border-ink bg-terracotta px-4 py-2 font-hand text-sm text-card shadow-[2px_2px_0_var(--shadow-beige)]"
-      >
-        Download decision brief
-      </button>
+      <div className="mt-5 flex flex-wrap gap-3">
+        <button
+          type="button"
+          onClick={downloadBrief}
+          className="rounded-full border-2 border-ink bg-terracotta px-4 py-2 font-hand text-sm text-card shadow-[2px_2px_0_var(--shadow-beige)]"
+        >
+          Download decision brief
+        </button>
+        <button
+          type="button"
+          onClick={() => router.push("/")}
+          className="rounded-full border-2 border-ink bg-card px-4 py-2 font-hand text-sm text-ink shadow-[2px_2px_0_var(--shadow-beige)] transition-transform hover:-translate-y-0.5"
+        >
+          New inquiry
+        </button>
+      </div>
     </motion.section>
   );
 }
