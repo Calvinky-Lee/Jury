@@ -1,4 +1,4 @@
-import { getDb } from '../db/mongo'
+import { getDb } from '../db/client.js'
 
 export type PersonaWithEmbedding = {
   id: string
@@ -24,7 +24,8 @@ export async function retrievePool(
   queryVector: number[],
   k: number = POOL_SIZE,
 ): Promise<PersonaWithEmbedding[]> {
-  const docs = await getDb()
+  const db = await getDb()
+  const docs = await db
     .collection('personas')
     .aggregate([
       {

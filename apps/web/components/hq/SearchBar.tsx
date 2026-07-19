@@ -42,7 +42,8 @@ export function SearchBar({ onResults }: SearchBarProps) {
         onChange={(e) => setQuery(e.target.value)}
         placeholder="Search past cases…"
         aria-label="Search past cases"
-        className="w-full rounded-full border border-white/10 bg-white/5 px-5 py-2.5 text-sm text-neutral-100 outline-none placeholder:text-neutral-500 focus:border-white/25"
+        className="w-full rounded-full border-2 border-ink bg-card px-5 py-2.5 font-sans text-sm text-ink shadow-[3px_3px_0_var(--shadow-beige)] outline-none placeholder:text-ink-soft/70 focus:shadow-[2px_2px_0_var(--shadow-beige)]"
+        style={{ borderRadius: "999px 998px 999px 997px / 60% 58% 62% 59%" }}
       />
     </div>
   );

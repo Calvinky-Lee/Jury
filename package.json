@@ -4,6 +4,10 @@
   "type": "module",
   "scripts": {
     "dev:web": "pnpm --filter @council/web dev",
+    "dev:council": "pnpm --filter @council/service dev",
+    "dev": "concurrently -n web,council -c blue,magenta \"pnpm dev:web\" \"pnpm dev:council\"",
+    "demo": "concurrently -n web,council -c blue,magenta \"pnpm dev:web\" \"cross-env DEMO_MODE=1 pnpm dev:council\"",
+    "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
     "seed:generate": "tsx seed/generate-personas.ts",
@@ -15,6 +19,8 @@
   },
   "devDependencies": {
     "@types/node": "^26.1.1",
+    "concurrently": "^9.1.0",
+    "cross-env": "^7.0.3",
     "tsx": "^4.19.0",
     "typescript": "^5.6.0",
     "vitest": "^3.0.0"

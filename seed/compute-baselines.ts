@@ -9,7 +9,7 @@ import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import 'dotenv/config'
 import { diversityScore } from '../apps/council-service/src/casting/diversity'
-import { closeDb, getDb } from '../apps/council-service/src/db/mongo'
+import { closeDb, getDb } from '../apps/council-service/src/db/client'
 
 const OUT = join(
   dirname(fileURLToPath(import.meta.url)),
@@ -18,7 +18,8 @@ const OUT = join(
 const SAMPLES = 1000
 
 async function main() {
-  const docs = await getDb()
+  const db = await getDb()
+  const docs = await db
     .collection('personas')
     .find({}, { projection: { embedding: 1 } })
     .toArray()

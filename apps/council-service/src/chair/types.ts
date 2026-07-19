@@ -2,24 +2,18 @@ import { z } from 'zod';
 import {
   StanceSchema,
   VerdictSchema,
-  PhaseSchema,
-  SessionStatusSchema,
   type Stance,
   type Verdict,
   type Phase,
   type SessionStatus,
+  type Avatar,
 } from '@council/contract';
 
-// Stance/Verdict/Phase/SessionStatus now come from the real @council/contract
-// package (landed at hour 0) — re-exported here so every chair/ file can keep
-// importing from './types.js' without churn. This file's own schemas below
-// (IntakeResult, PersonaForBrief, SituationBrief, MemberPhaseOutput,
-// CastMemberLite) have no contract equivalent and stay local.
-export { StanceSchema, VerdictSchema, PhaseSchema, SessionStatusSchema };
+// Stance/Verdict/Phase/SessionStatus now come from @council/contract (P4's hour-0
+// deliverable, landed after this file was first written as a stand-in — reconciled
+// here rather than left to silently diverge, per this file's own original warning).
+export { StanceSchema, VerdictSchema };
 export type { Stance, Verdict, Phase, SessionStatus };
-
-// Derived from the real schema rather than duplicated — no drift risk.
-export const PHASES = PhaseSchema.options;
 
 // Just enough persona shape to build prompts without depending on P2's full
 // persona/casting system (spec 05 owns the real thing).
@@ -36,10 +30,14 @@ export interface MemberTranscript {
   closing: string;
 }
 
+// Mirrors specs/02-contract.md §phases.ts (kept local as a plain array for
+// state-machine.ts's iteration; the `Phase`/`SessionStatus` *types* above are the
+// contract's real ones).
+export const PHASES = ['intake', 'casting', 'statements', 'rebuttal', 'closing', 'verdict'] as const;
+
 // Intake output (spec 04 §intake.ts). Note: the contract's `dilemma_parsed` SSE
 // payload (spec 02) only carries `summary`/`axesOfTension`/`councilSize` —
 // `decisionType` is used internally (eval-set categorization) and isn't emitted.
-// Flag for hour-0 reconciliation if that changes.
 export const IntakeResultSchema = z.object({
   summary: z.string().min(1),
   axesOfTension: z.array(z.string().min(1)).min(2).max(6),
@@ -52,11 +50,18 @@ export type IntakeResult = z.infer<typeof IntakeResultSchema>;
 // (CastMemberLite) plus the stance-profile fields spec 05 owns for real
 // (P2's persona/casting system). This is a local stand-in, same caveat as
 // CastMemberLite above.
+//
+// `avatar`/`domains` are optional here (existing Fakes/tests don't set them)
+// but the orchestrator spreads this shape straight into the `persona_cast`
+// wire event, whose `CastMember` (spec 02, packages/contract/src/persona.ts)
+// requires both — the real CastingProvider adapter always populates them.
 export interface PersonaForBrief extends CastMemberLite {
   voice: string;
   coreValues: string[];
   biases: string[];
   decisionStyle: string;
+  avatar?: Avatar;
+  domains?: string[];
 }
 
 // Situation-brief output (spec 04 §brief.ts).

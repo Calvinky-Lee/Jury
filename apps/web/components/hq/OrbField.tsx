@@ -34,7 +34,7 @@ export function OrbField({ searchResults }: OrbFieldProps) {
 
   if (unreachable && !searchResults) {
     return (
-      <p className="text-sm text-neutral-500">
+      <p className="font-sans text-sm text-ink-soft">
         no memories yet — council service isn&apos;t running
       </p>
     );
@@ -42,7 +42,7 @@ export function OrbField({ searchResults }: OrbFieldProps) {
 
   if (shown && shown.length === 0) {
     return (
-      <p className="text-sm text-neutral-500">
+      <p className="font-sans text-sm text-ink-soft">
         {searchResults ? "no cases match that search" : "no memories yet — file your first case"}
       </p>
     );
@@ -54,7 +54,11 @@ export function OrbField({ searchResults }: OrbFieldProps) {
         <motion.button
           key={session.id}
           onClick={() => router.push(`/replay/${session.id}`)}
-          title={`${session.dilemma} — ${session.orb.voteSplit.for}–${session.orb.voteSplit.against}`}
+          title={
+            session.orb.voteSplit
+              ? `${session.dilemma} — ${session.orb.voteSplit.for.length}–${session.orb.voteSplit.against.length}`
+              : session.dilemma
+          }
           className="group relative h-14 w-14 shrink-0 rounded-full"
           animate={{ y: [0, -6, 0] }}
           transition={{ duration: 3 + (i % 3), repeat: Infinity, ease: "easeInOut", delay: i * 0.2 }}

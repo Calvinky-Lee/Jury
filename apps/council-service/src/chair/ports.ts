@@ -1,4 +1,5 @@
 import type { PersonaForBrief } from './types.js';
+import type { VectorPoint } from '@council/contract';
 
 // The orchestrator depends on three subsystems P1 doesn't own. Each gets the
 // same treatment as model-client.ts's ModelClient: a typed interface P1 codes
@@ -8,13 +9,19 @@ import type { PersonaForBrief } from './types.js';
 // --- Casting (real: P2, spec 05) --------------------------------------------
 
 export interface CastingResult {
-  members: PersonaForBrief[];
+  // `mmrScore`/`vectorMap` are optional so FakeCastingProvider (and existing
+  // tests) don't need updating — the real adapter populates them from P2's
+  // castCouncil (spec 05 §API), which the UI's persona card / vector sidebar need.
+  members: (PersonaForBrief & { mmrScore?: number })[];
   diversityScore: number;
   baselineRatio: number;
+  vectorMap?: VectorPoint[];
 }
 
 export interface CastingProvider {
-  castCouncil(dilemma: string): Promise<CastingResult>;
+  // `size` = intake's councilSize (3-6) — the real adapter needs it to call
+  // P2's castCouncil(parsedDilemma, size); Fakes ignore it.
+  castCouncil(dilemma: string, size: number): Promise<CastingResult>;
 }
 
 export class FakeCastingProvider implements CastingProvider {
@@ -22,10 +29,16 @@ export class FakeCastingProvider implements CastingProvider {
     private readonly members: PersonaForBrief[],
     private readonly diversityScore = 0.8,
     private readonly baselineRatio = 1.4,
+    private readonly vectorMap: VectorPoint[] = [],
   ) {}
 
   async castCouncil(): Promise<CastingResult> {
-    return { members: this.members, diversityScore: this.diversityScore, baselineRatio: this.baselineRatio };
+    return {
+      members: this.members,
+      diversityScore: this.diversityScore,
+      baselineRatio: this.baselineRatio,
+      vectorMap: this.vectorMap,
+    };
   }
 }
 

@@ -159,7 +159,9 @@ export async function runDeliberation(
 
   // --- Casting ---------------------------------------------------------------
   await emit('casting_started', { poolSize: 25, councilSize: intake.councilSize });
-  const casting = await deps.castingProvider.castCouncil(dilemma);
+  // Embeds the PARSED dilemma (intake.summary), not raw user text — the axes
+  // are what members must be relevant to (spec 05 §retrieve.ts).
+  const casting = await deps.castingProvider.castCouncil(intake.summary, intake.councilSize);
   const totalMembers = casting.members.length;
 
   const briefs = new Map<string, SituationBrief>();
@@ -168,7 +170,7 @@ export async function runDeliberation(
     const brief = await runBrief(deps.modelClient, member, intake);
     briefs.set(member.id, brief);
     await emit('persona_cast', {
-      member: { ...member, situationBrief: brief.brief, mmrScore: 0 },
+      member: { ...member, situationBrief: brief.brief, mmrScore: member.mmrScore ?? 0 },
       seat,
       runningDiversityScore: casting.diversityScore,
       initialRead: brief.initialRead,
@@ -179,7 +181,7 @@ export async function runDeliberation(
   await emit('casting_done', {
     diversityScore: casting.diversityScore,
     baselineRatio: casting.baselineRatio,
-    vectorMap: [],
+    vectorMap: casting.vectorMap ?? [],
   });
   status = transition(status, { type: 'phase_done', phase: 'casting' });
 

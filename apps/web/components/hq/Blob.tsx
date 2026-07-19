@@ -9,9 +9,11 @@ interface BlobProps {
   state?: BlobState;
   size?: number;
   className?: string;
+  /** Staggers the idle bounce so a row of blobs animates left-to-right in sequence. */
+  index?: number;
 }
 
-export function Blob({ avatar, state = "idle", size = 72, className }: BlobProps) {
+export function Blob({ avatar, state = "idle", size = 72, className, index = 0 }: BlobProps) {
   const color = HUES[avatar.hue];
   const desaturated = state === "dissent";
 
@@ -23,18 +25,28 @@ export function Blob({ avatar, state = "idle", size = 72, className }: BlobProps
       className={className}
       role="img"
       aria-label={`${avatar.hue} ${avatar.form} council member, ${state}`}
+      style={{ transformOrigin: "50% 100%" }}
       animate={
         state === "idle"
-          ? { y: [0, -3, 0] }
+          ? { y: [0, -14, 0], scaleY: [0.85, 1.15, 0.85], scaleX: [1.12, 0.9, 1.12] }
           : state === "talking"
             ? { scale: [1, 1.03, 1] }
             : { rotate: [0, -1.5, 0] }
       }
-      transition={{
-        duration: state === "talking" ? 0.6 : 2.4,
-        repeat: Infinity,
-        ease: "easeInOut",
-      }}
+      transition={
+        state === "idle"
+          ? {
+              duration: 1.3,
+              repeat: Infinity,
+              ease: ["easeOut", "easeIn"],
+              delay: index * 0.2,
+            }
+          : {
+              duration: 0.6,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }
+      }
     >
       <path
         d={BLOB_BODY_PATH[avatar.form]}
